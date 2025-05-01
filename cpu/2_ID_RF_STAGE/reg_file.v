@@ -13,7 +13,7 @@ module reg_file (WRITE_DATA, DATA_OUT1, DATA_OUT2, WRITE_ADDR, OUT_ADDR1, OUT_AD
     reg [31:0] REGISTERS [31:0];
 
     // Reading the registers
-    // Assychronous read, this runs when the register values changes
+    // Asynchronous read, this runs when the register values change
     assign #2 DATA_OUT1 = REGISTERS[OUT_ADDR1];
     assign #2 DATA_OUT2 = REGISTERS[OUT_ADDR2];
 
@@ -21,13 +21,14 @@ module reg_file (WRITE_DATA, DATA_OUT1, DATA_OUT2, WRITE_ADDR, OUT_ADDR1, OUT_AD
     integer i;
     always @ (negedge CLK) 
     begin
+        // Reset the registers if RESET is high
+        // If RESET is high, all registers are set to 0
         if (RESET)
             for (i = 0; i < 32; i = i + 1)
-                REGISTERS[i] <= #1 32'd0;       // Write zero to all the registers
+                REGISTERS[i] <= #1 32'd0;       
         else
             if (WRITE_ENABLE && (WRITE_ADDR !== 5'd0))     // Register x0 cannot be written to
-                REGISTERS[IN_ADDR] <= #1 WRITE_DATA;
-        end
+                REGISTERS[WRITE_ADDR] <= #1 WRITE_DATA; // Corrected from IN_ADDR to WRITE_ADDR
     end
 
 endmodule

@@ -2,6 +2,7 @@
 `timescale 1ns/100ps
 
 module reg_file_tb;
+    
     // Defining input/output ports
     reg WRITE_ENABLE, CLK, RESET;
     reg [4:0] WRITE_ADDR, OUT_ADDR1, OUT_ADDR2;
@@ -9,7 +10,7 @@ module reg_file_tb;
     wire [31:0] DATA_OUT1, DATA_OUT2;
 
     // Instantiate the register file module
-    reg_file my_reg_file(
+    reg_file reg_file_t(
         .WRITE_ENABLE(WRITE_ENABLE),
         .CLK(CLK),
         .RESET(RESET),
@@ -23,12 +24,20 @@ module reg_file_tb;
 
     // Clock generation
     initial begin
-        CLK = 0;
+        CLK = 1;
         forever #5 CLK = ~CLK; // Toggle clock every 5 time units
     end
 
     // Testbench logic
     initial begin
+
+        // generate files needed to plot the waveform using GTKWave
+        $dumpfile("reg_file_tb.vcd");
+        $dumpvars(0, reg_file_tb);
+        $monitor("Time: %0t | WRITE_ENABLE: %b | WRITE_ADDR: %d | OUT_ADDR1: %d | OUT_ADDR2: %d | WRITE_DATA: %d | DATA_OUT1: %d | DATA_OUT2: %d", 
+                 $time, WRITE_ENABLE, WRITE_ADDR, OUT_ADDR1, OUT_ADDR2, WRITE_DATA, DATA_OUT1, DATA_OUT2);
+
+    
         // Initialize inputs
         RESET = 1; // Assert reset
         WRITE_ENABLE = 0;
@@ -115,6 +124,8 @@ module reg_file_tb;
             $display("Test passed: DATA_OUT2 = %d", DATA_OUT2);
         end
 
+        $finish;
+
     end
-    
+
 endmodule
