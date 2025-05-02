@@ -6,8 +6,10 @@
 module dmem(
     input [31:0] address, // Address input
     input [31:0] data_in, // Data input
-    input mem_write, // Memory write signal
-    input mem_read, // Memory read signal
+    input [1:0] mem_write, // Memory write signal
+    input [1:0]mem_read, // Memory read signal
+    input clk, // Clock signal
+    input reset, // Reset signal
     output reg [31:0] data_out // Data output
 );
     reg [31:0] memory [0:1023]; // Memory array (1024 words of 32 bits each)
