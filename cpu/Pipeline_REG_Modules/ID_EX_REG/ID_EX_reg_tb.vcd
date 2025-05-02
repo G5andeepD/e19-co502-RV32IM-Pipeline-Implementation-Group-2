@@ -1,0 +1,225 @@
+$date
+	Fri May 02 11:17:22 2025
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	100ps
+$end
+$scope module ID_EX_reg_tb $end
+$var wire 2 ! OUT_REG_WRITE_SEL [1:0] $end
+$var wire 1 " OUT_REG_WRITE_ENABLE $end
+$var wire 32 # OUT_READ_DATA2 [31:0] $end
+$var wire 32 $ OUT_READ_DATA1 [31:0] $end
+$var wire 32 % OUT_PC_PLUS_4 [31:0] $end
+$var wire 1 & OUT_OP2_SEL $end
+$var wire 1 ' OUT_OP1_SEL $end
+$var wire 2 ( OUT_MEM_WRITE [1:0] $end
+$var wire 2 ) OUT_MEM_READ [1:0] $end
+$var wire 32 * OUT_IMMEDIATE [31:0] $end
+$var wire 5 + OUT_DEST_REG [4:0] $end
+$var wire 1 , OUT_BRANCH_JUMP $end
+$var wire 5 - OUT_ALU_OP [4:0] $end
+$var reg 5 . ALU_OP [4:0] $end
+$var reg 1 / BRANCH_JUMP $end
+$var reg 1 0 CLK $end
+$var reg 5 1 DEST_REG [4:0] $end
+$var reg 32 2 IMMEDIATE [31:0] $end
+$var reg 2 3 MEM_READ [1:0] $end
+$var reg 2 4 MEM_WRITE [1:0] $end
+$var reg 1 5 OP1_SEL $end
+$var reg 1 6 OP2_SEL $end
+$var reg 32 7 PC_PLUS_4 [31:0] $end
+$var reg 32 8 READ_DATA1 [31:0] $end
+$var reg 32 9 READ_DATA2 [31:0] $end
+$var reg 1 : REG_WRITE_ENABLE $end
+$var reg 2 ; REG_WRITE_SEL [1:0] $end
+$var reg 1 < RESET $end
+$scope module id_ex_reg_t $end
+$var wire 5 = ALU_OP [4:0] $end
+$var wire 1 / BRANCH_JUMP $end
+$var wire 1 0 CLK $end
+$var wire 5 > DEST_REG [4:0] $end
+$var wire 32 ? IMMEDIATE [31:0] $end
+$var wire 2 @ MEM_READ [1:0] $end
+$var wire 2 A MEM_WRITE [1:0] $end
+$var wire 1 5 OP1_SEL $end
+$var wire 1 6 OP2_SEL $end
+$var wire 32 B PC_PLUS_4 [31:0] $end
+$var wire 32 C READ_DATA1 [31:0] $end
+$var wire 32 D READ_DATA2 [31:0] $end
+$var wire 1 : REG_WRITE_ENABLE $end
+$var wire 2 E REG_WRITE_SEL [1:0] $end
+$var wire 1 < RESET $end
+$var reg 5 F OUT_ALU_OP [4:0] $end
+$var reg 1 , OUT_BRANCH_JUMP $end
+$var reg 5 G OUT_DEST_REG [4:0] $end
+$var reg 32 H OUT_IMMEDIATE [31:0] $end
+$var reg 2 I OUT_MEM_READ [1:0] $end
+$var reg 2 J OUT_MEM_WRITE [1:0] $end
+$var reg 1 ' OUT_OP1_SEL $end
+$var reg 1 & OUT_OP2_SEL $end
+$var reg 32 K OUT_PC_PLUS_4 [31:0] $end
+$var reg 32 L OUT_READ_DATA1 [31:0] $end
+$var reg 32 M OUT_READ_DATA2 [31:0] $end
+$var reg 1 " OUT_REG_WRITE_ENABLE $end
+$var reg 2 N OUT_REG_WRITE_SEL [1:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+b0 N
+b0 M
+b0 L
+b0 K
+b0 J
+b0 I
+b0 H
+b0 G
+b0 F
+b0 E
+b0 D
+b0 C
+b0 B
+b0 A
+b0 @
+b0 ?
+b0 >
+b0 =
+1<
+b0 ;
+0:
+b0 9
+b0 8
+b0 7
+06
+05
+b0 4
+b0 3
+b0 2
+b0 1
+10
+0/
+b0 .
+b0 -
+0,
+b0 +
+b0 *
+b0 )
+b0 (
+0'
+0&
+b0 %
+b0 $
+b0 #
+0"
+b0 !
+$end
+#40
+00
+#80
+10
+0<
+#120
+00
+#160
+1"
+b11 !
+b11 N
+b10 )
+b10 I
+b1 (
+b1 J
+1'
+1,
+b10 -
+b10 F
+b1100100 *
+b1100100 H
+b1010100 #
+b1010100 M
+b101010 $
+b101010 L
+b1101000 %
+b1101000 K
+b1 +
+b1 G
+10
+1:
+b11 ;
+b11 E
+b10 3
+b10 @
+b1 4
+b1 A
+15
+1/
+b10 .
+b10 =
+b1100100 2
+b1100100 ?
+b1010100 9
+b1010100 D
+b101010 8
+b101010 C
+b1101000 7
+b1101000 B
+b1 1
+b1 >
+#200
+00
+#240
+0"
+b0 !
+b0 N
+b1 )
+b1 I
+b10 (
+b10 J
+1&
+0'
+0,
+b11 -
+b11 F
+b100101100 *
+b100101100 H
+b110010000 #
+b110010000 M
+b11001000 $
+b11001000 L
+b11001100 %
+b11001100 K
+b10 +
+b10 G
+10
+0:
+b0 ;
+b0 E
+b1 3
+b1 @
+b10 4
+b10 A
+16
+05
+0/
+b11 .
+b11 =
+b100101100 2
+b100101100 ?
+b110010000 9
+b110010000 D
+b11001000 8
+b11001000 C
+b11001100 7
+b11001100 B
+b10 1
+b10 >
+#280
+00
+#320
+10

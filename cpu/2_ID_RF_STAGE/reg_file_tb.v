@@ -25,7 +25,7 @@ module reg_file_tb;
     // Clock generation
     initial begin
         CLK = 1;
-        forever #4 CLK = ~CLK; // Toggle clock every 5 time units
+        forever #4 CLK = ~CLK; // Toggle clock every 4 time units
     end
 
     // Testbench logic

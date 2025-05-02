@@ -1,0 +1,165 @@
+$date
+	Fri May 02 11:17:36 2025
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	100ps
+$end
+$scope module EX_MA_reg_tb $end
+$var wire 2 ! OUT_REG_WRITE_SEL [1:0] $end
+$var wire 1 " OUT_REG_WRITE_ENABLE $end
+$var wire 32 # OUT_PC_PLUS_4 [31:0] $end
+$var wire 2 $ OUT_MEM_WRITE [1:0] $end
+$var wire 2 % OUT_MEM_READ [1:0] $end
+$var wire 32 & OUT_IMMEDIATE [31:0] $end
+$var wire 5 ' OUT_DEST_REG [4:0] $end
+$var wire 32 ( OUT_ALU_RESULT [31:0] $end
+$var reg 32 ) ALU_RESULT [31:0] $end
+$var reg 1 * CLK $end
+$var reg 5 + DEST_REG [4:0] $end
+$var reg 32 , IMMEDIATE [31:0] $end
+$var reg 2 - MEM_READ [1:0] $end
+$var reg 2 . MEM_WRITE [1:0] $end
+$var reg 32 / PC_PLUS_4 [31:0] $end
+$var reg 1 0 REG_WRITE_ENABLE $end
+$var reg 2 1 REG_WRITE_SEL [1:0] $end
+$var reg 1 2 RESET $end
+$scope module ex_ma_reg_t $end
+$var wire 32 3 ALU_RESULT [31:0] $end
+$var wire 1 * CLK $end
+$var wire 5 4 DEST_REG [4:0] $end
+$var wire 32 5 IMMEDIATE [31:0] $end
+$var wire 2 6 MEM_READ [1:0] $end
+$var wire 2 7 MEM_WRITE [1:0] $end
+$var wire 32 8 PC_PLUS_4 [31:0] $end
+$var wire 1 0 REG_WRITE_ENABLE $end
+$var wire 2 9 REG_WRITE_SEL [1:0] $end
+$var wire 1 2 RESET $end
+$var reg 32 : OUT_ALU_RESULT [31:0] $end
+$var reg 5 ; OUT_DEST_REG [4:0] $end
+$var reg 32 < OUT_IMMEDIATE [31:0] $end
+$var reg 2 = OUT_MEM_READ [1:0] $end
+$var reg 2 > OUT_MEM_WRITE [1:0] $end
+$var reg 32 ? OUT_PC_PLUS_4 [31:0] $end
+$var reg 1 " OUT_REG_WRITE_ENABLE $end
+$var reg 2 @ OUT_REG_WRITE_SEL [1:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+b0 @
+b0 ?
+b0 >
+b0 =
+b0 <
+b0 ;
+b0 :
+b0 9
+b0 8
+b0 7
+b0 6
+b0 5
+b0 4
+b0 3
+12
+b0 1
+00
+b0 /
+b0 .
+b0 -
+b0 ,
+b0 +
+1*
+b0 )
+b0 (
+b0 '
+b0 &
+b0 %
+b0 $
+b0 #
+0"
+b0 !
+$end
+#40
+0*
+#80
+1*
+02
+#120
+0*
+#160
+1"
+b11 !
+b11 @
+b10 %
+b10 =
+b1 $
+b1 >
+b11001000 &
+b11001000 <
+b1101000 #
+b1101000 ?
+b1 '
+b1 ;
+b1100100 (
+b1100100 :
+1*
+10
+b11 1
+b11 9
+b10 -
+b10 6
+b1 .
+b1 7
+b11001000 ,
+b11001000 5
+b1101000 /
+b1101000 8
+b1 +
+b1 4
+b1100100 )
+b1100100 3
+#200
+0*
+#240
+0"
+b10 !
+b10 @
+b1 %
+b1 =
+b11 $
+b11 >
+b110010000 &
+b110010000 <
+b100110000 #
+b100110000 ?
+b10 '
+b10 ;
+b100101100 (
+b100101100 :
+1*
+00
+b10 1
+b10 9
+b1 -
+b1 6
+b11 .
+b11 7
+b110010000 ,
+b110010000 5
+b100110000 /
+b100110000 8
+b10 +
+b10 4
+b100101100 )
+b100101100 3
+#280
+0*
+#320
+1*
