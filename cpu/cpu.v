@@ -151,7 +151,7 @@ ID_EX_reg id_ex_reg(
     .PC_PLUS_4(pc_id), // PC+4 value from IF_ID stage
     .READ_DATA1(rs_data_id), // Read data 1 from register file
     .READ_DATA2(rt_data_id), // Read data 2 from register file
-    .IMMEDIATE(32'b0), // Immediate value from instruction
+    .IMMEDIATE({20'b0, instr_id[31:20]}), // Immediate value from instruction
     .ALU_OP(aluop_id), // ALU operation code from control unit
     .BRANCH_JUMP(branch_jump_id), // Branch/jump signal from control unit
     .OP1_SEL(op1_sel_id), // Operand 1 selection signal from control unit
