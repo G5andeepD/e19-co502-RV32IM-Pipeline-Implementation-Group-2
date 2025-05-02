@@ -1,5 +1,5 @@
 `include "1_IF_STAGE/pc.v"
-`include "1_IF_STAGE/imem.v"
+// `include "1_IF_STAGE/imem.v"
 `include "2_ID_RF_STAGE/reg_file.v"
 `include "2_ID_RF_STAGE/control_unit.v"
 `include "3_EX_STAGE/alu.v"
