@@ -10,10 +10,10 @@ module imem(
     always @(posedge clk) begin
         if (reset) begin
             instruction <= 32'b0; // Reset instruction to 0
-            mem[0] = 32h'00000000; // Initialize memory with some values
-            mem[1] = 32h'00000001; // Initialize memory with some values
-            mem[2] = 32h'00000002; // Initialize memory with some values
-            mem[3] = 32h'00000003; // Initialize memory with some values
+            mem[0] = 32'h00000000;
+            mem[1] = 32'h00000001;
+            mem[2] = 32'h00000002;
+            mem[3] = 32'h00000003;// Initialize memory with some values
         end else begin
             instruction <= mem[pc[31:2]]; // Fetch instruction from memory
         end

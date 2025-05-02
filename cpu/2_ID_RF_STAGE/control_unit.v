@@ -1,19 +1,19 @@
-`include "../constants/encordings.v"
+`include "./constants/encordings.v"
 `timescale 1ns/100ps
 
 module control_unit (
     input  [6:0] opcode,
     input  [2:0] funct3,
     input  [6:0] funct7,
-    output wire imm_sel[2:0],
+    output wire [2:0]imm_sel,
     output wire [4:0] aluop,
-    output wire branch_jump[2:0],
+    output wire [2:0]branch_jump,
     output wire op1_sel,
     output wire op2_sel,
-    output wire mem_write[1:0],
-    output wire mem_read[1:0],
-    output wire reg_write_select[1:0],
-    output wire reg_write_enable,
+    output wire [1:0]mem_write,
+    output wire [1:0]mem_read,
+    output wire [1:0]reg_write_select,
+    output wire reg_write_enable
 
 );
 
