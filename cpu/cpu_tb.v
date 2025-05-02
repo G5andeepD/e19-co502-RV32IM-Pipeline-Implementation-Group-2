@@ -55,6 +55,7 @@ module cpu_tb;
     end
 
     // Testbench logic
+    integer i;
     initial begin
         // Generate files needed to plot the waveform using GTKWave
         $dumpfile("cpu_tb.vcd");
@@ -62,6 +63,8 @@ module cpu_tb;
         $monitor("Time: %0t | clk: %b | reset: %b | instr_if: %h | dmem_data_out: %h | pc_out: %h | dmem_data_in: %h | alu_result_ma: %h | mem_write_ma: %b | mem_read_ma: %b", 
                  $time, clk, reset, instr_if, dmem_data_out, pc_out, dmem_data_in, alu_result_ma, mem_write_ma, mem_read_ma);
 
+        for (i = 0; i < 32; i = i + 1)
+            $dumpvars(1, cpu_tb.cpu_t.reg_file.REGISTERS[i]); // Dump all registers in the register file
         // Initialize inputs
         reset = 1; // Assert reset
         #8; // Wait for a few clock cycles
@@ -71,6 +74,7 @@ module cpu_tb;
         #8; // Wait for a few clock cycles
 
         // Add more test cases as needed
+        
 
         // Finish simulation after some time
         #100;
