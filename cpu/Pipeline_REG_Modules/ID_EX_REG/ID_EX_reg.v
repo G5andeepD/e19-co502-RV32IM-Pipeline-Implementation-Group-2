@@ -44,7 +44,7 @@ module ID_EX_reg (
     input [31:0] READ_DATA2; // Input read data 2
     input [31:0] IMMEDIATE; // Input immediate value
     input [4:0] ALU_OP; // Input ALU operation code
-    input BRANCH_JUMP; // Input branch/jump signal
+    input [2:0] BRANCH_JUMP; // Input branch/jump signal
     input OP1_SEL; // Input first operand select signal
     input OP2_SEL; // Input second operand select signal
     input [1:0] MEM_WRITE; // Input memory write signal
@@ -60,7 +60,7 @@ module ID_EX_reg (
     output reg [31:0] OUT_READ_DATA2; // Output read data 2
     output reg [31:0] OUT_IMMEDIATE; // Output immediate value
     output reg [4:0] OUT_ALU_OP; // Output ALU operation code
-    output reg OUT_BRANCH_JUMP; // Output branch/jump signal
+    output reg [2:0] OUT_BRANCH_JUMP; // Output branch/jump signal
     output reg OUT_OP1_SEL; // Output first operand select signal
     output reg OUT_OP2_SEL; // Output second operand select signal
     output reg [1:0] OUT_MEM_WRITE; // Output memory write signal
