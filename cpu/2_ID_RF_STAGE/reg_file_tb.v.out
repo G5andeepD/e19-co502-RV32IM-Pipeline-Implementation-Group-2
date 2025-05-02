@@ -7,18 +7,18 @@
 :vpi_module "C:\iverilog\lib\ivl\vhdl_textio.vpi";
 :vpi_module "C:\iverilog\lib\ivl\v2005_math.vpi";
 :vpi_module "C:\iverilog\lib\ivl\va_math.vpi";
-S_00000260452b8100 .scope module, "reg_file_tb" "reg_file_tb" 2 4;
+S_0000023cfe36bd20 .scope module, "reg_file_tb" "reg_file_tb" 2 4;
  .timescale -9 -10;
-v00000260452c43f0_0 .var "CLK", 0 0;
-v00000260452c3bd0_0 .net "DATA_OUT1", 31 0, L_00000260452cf6a0;  1 drivers
-v00000260452c4670_0 .net "DATA_OUT2", 31 0, L_00000260452cf710;  1 drivers
-v00000260452c3e50_0 .var "OUT_ADDR1", 4 0;
-v00000260452c3950_0 .var "OUT_ADDR2", 4 0;
-v00000260452c3d10_0 .var "RESET", 0 0;
-v00000260452c3ef0_0 .var "WRITE_ADDR", 4 0;
-v00000260452c3a90_0 .var "WRITE_DATA", 31 0;
-v00000260452c3b30_0 .var "WRITE_ENABLE", 0 0;
-S_000002604520bda0 .scope module, "reg_file_t" "reg_file" 2 13, 3 3 0, S_00000260452b8100;
+v0000023cfe419450_0 .var "CLK", 0 0;
+v0000023cfe419c70_0 .net "DATA_OUT1", 31 0, L_0000023cfe3bf390;  1 drivers
+v0000023cfe4193b0_0 .net "DATA_OUT2", 31 0, L_0000023cfe3bf400;  1 drivers
+v0000023cfe419810_0 .var "OUT_ADDR1", 4 0;
+v0000023cfe419d10_0 .var "OUT_ADDR2", 4 0;
+v0000023cfe419950_0 .var "RESET", 0 0;
+v0000023cfe419270_0 .var "WRITE_ADDR", 4 0;
+v0000023cfe4198b0_0 .var "WRITE_DATA", 31 0;
+v0000023cfe419ef0_0 .var "WRITE_ENABLE", 0 0;
+S_0000023cfe36e2e0 .scope module, "reg_file_t" "reg_file" 2 13, 3 3 0, S_0000023cfe36bd20;
  .timescale -9 -10;
     .port_info 0 /INPUT 32 "WRITE_DATA";
     .port_info 1 /OUTPUT 32 "DATA_OUT1";
@@ -29,62 +29,62 @@ S_000002604520bda0 .scope module, "reg_file_t" "reg_file" 2 13, 3 3 0, S_0000026
     .port_info 6 /INPUT 1 "WRITE_ENABLE";
     .port_info 7 /INPUT 1 "CLK";
     .port_info 8 /INPUT 1 "RESET";
-L_00000260452cf6a0/d .functor BUFZ 32, L_00000260452c3c70, C4<00000000000000000000000000000000>, C4<00000000000000000000000000000000>, C4<00000000000000000000000000000000>;
-L_00000260452cf6a0 .delay 32 (20,20,20) L_00000260452cf6a0/d;
-L_00000260452cf710/d .functor BUFZ 32, L_00000260452c3db0, C4<00000000000000000000000000000000>, C4<00000000000000000000000000000000>, C4<00000000000000000000000000000000>;
-L_00000260452cf710 .delay 32 (20,20,20) L_00000260452cf710/d;
-v00000260452b8290_0 .net "CLK", 0 0, v00000260452c43f0_0;  1 drivers
-v00000260452bc010_0 .net "DATA_OUT1", 31 0, L_00000260452cf6a0;  alias, 1 drivers
-v0000026045292b30_0 .net "DATA_OUT2", 31 0, L_00000260452cf710;  alias, 1 drivers
-v0000026045292bd0_0 .net "OUT_ADDR1", 4 0, v00000260452c3e50_0;  1 drivers
-v0000026045292c70_0 .net "OUT_ADDR2", 4 0, v00000260452c3950_0;  1 drivers
-v0000026045292d10 .array "REGISTERS", 0 31, 31 0;
-v0000026045292db0_0 .net "RESET", 0 0, v00000260452c3d10_0;  1 drivers
-v0000026045292e50_0 .net "WRITE_ADDR", 4 0, v00000260452c3ef0_0;  1 drivers
-v0000026045292ef0_0 .net "WRITE_DATA", 31 0, v00000260452c3a90_0;  1 drivers
-v00000260452c4490_0 .net "WRITE_ENABLE", 0 0, v00000260452c3b30_0;  1 drivers
-v00000260452c42b0_0 .net *"_ivl_0", 31 0, L_00000260452c3c70;  1 drivers
-v00000260452c3810_0 .net *"_ivl_10", 6 0, L_00000260452c3f90;  1 drivers
-L_000002604532a090 .functor BUFT 1, C4<00>, C4<0>, C4<0>, C4<0>;
-v00000260452c39f0_0 .net *"_ivl_13", 1 0, L_000002604532a090;  1 drivers
-v00000260452c40d0_0 .net *"_ivl_2", 6 0, L_00000260452c4530;  1 drivers
-L_000002604532a048 .functor BUFT 1, C4<00>, C4<0>, C4<0>, C4<0>;
-v00000260452c4710_0 .net *"_ivl_5", 1 0, L_000002604532a048;  1 drivers
-v00000260452c38b0_0 .net *"_ivl_8", 31 0, L_00000260452c3db0;  1 drivers
-v00000260452c4350_0 .var/i "i", 31 0;
-E_00000260452b51e0 .event negedge, v00000260452b8290_0;
-L_00000260452c3c70 .array/port v0000026045292d10, L_00000260452c4530;
-L_00000260452c4530 .concat [ 5 2 0 0], v00000260452c3e50_0, L_000002604532a048;
-L_00000260452c3db0 .array/port v0000026045292d10, L_00000260452c3f90;
-L_00000260452c3f90 .concat [ 5 2 0 0], v00000260452c3950_0, L_000002604532a090;
-    .scope S_000002604520bda0;
+L_0000023cfe3bf390/d .functor BUFZ 32, L_0000023cfe419630, C4<00000000000000000000000000000000>, C4<00000000000000000000000000000000>, C4<00000000000000000000000000000000>;
+L_0000023cfe3bf390 .delay 32 (20,20,20) L_0000023cfe3bf390/d;
+L_0000023cfe3bf400/d .functor BUFZ 32, L_0000023cfe419130, C4<00000000000000000000000000000000>, C4<00000000000000000000000000000000>, C4<00000000000000000000000000000000>;
+L_0000023cfe3bf400 .delay 32 (20,20,20) L_0000023cfe3bf400/d;
+v0000023cfe3a9330_0 .net "CLK", 0 0, v0000023cfe419450_0;  1 drivers
+v0000023cfe382f30_0 .net "DATA_OUT1", 31 0, L_0000023cfe3bf390;  alias, 1 drivers
+v0000023cfe36beb0_0 .net "DATA_OUT2", 31 0, L_0000023cfe3bf400;  alias, 1 drivers
+v0000023cfe36e470_0 .net "OUT_ADDR1", 4 0, v0000023cfe419810_0;  1 drivers
+v0000023cfe36e510_0 .net "OUT_ADDR2", 4 0, v0000023cfe419d10_0;  1 drivers
+v0000023cfe36e5b0 .array "REGISTERS", 0 31, 31 0;
+v0000023cfe36e650_0 .net "RESET", 0 0, v0000023cfe419950_0;  1 drivers
+v0000023cfe3aa3d0_0 .net "WRITE_ADDR", 4 0, v0000023cfe419270_0;  1 drivers
+v0000023cfe3aa470_0 .net "WRITE_DATA", 31 0, v0000023cfe4198b0_0;  1 drivers
+v0000023cfe419e50_0 .net "WRITE_ENABLE", 0 0, v0000023cfe419ef0_0;  1 drivers
+v0000023cfe419db0_0 .net *"_ivl_0", 31 0, L_0000023cfe419630;  1 drivers
+v0000023cfe419090_0 .net *"_ivl_10", 6 0, L_0000023cfe4191d0;  1 drivers
+L_0000023cfe41a0a0 .functor BUFT 1, C4<00>, C4<0>, C4<0>, C4<0>;
+v0000023cfe419b30_0 .net *"_ivl_13", 1 0, L_0000023cfe41a0a0;  1 drivers
+v0000023cfe4199f0_0 .net *"_ivl_2", 6 0, L_0000023cfe419f90;  1 drivers
+L_0000023cfe41a058 .functor BUFT 1, C4<00>, C4<0>, C4<0>, C4<0>;
+v0000023cfe419bd0_0 .net *"_ivl_5", 1 0, L_0000023cfe41a058;  1 drivers
+v0000023cfe419590_0 .net *"_ivl_8", 31 0, L_0000023cfe419130;  1 drivers
+v0000023cfe419a90_0 .var/i "i", 31 0;
+E_0000023cfe3a6490 .event negedge, v0000023cfe3a9330_0;
+L_0000023cfe419630 .array/port v0000023cfe36e5b0, L_0000023cfe419f90;
+L_0000023cfe419f90 .concat [ 5 2 0 0], v0000023cfe419810_0, L_0000023cfe41a058;
+L_0000023cfe419130 .array/port v0000023cfe36e5b0, L_0000023cfe4191d0;
+L_0000023cfe4191d0 .concat [ 5 2 0 0], v0000023cfe419d10_0, L_0000023cfe41a0a0;
+    .scope S_0000023cfe36e2e0;
 T_0 ;
-    %wait E_00000260452b51e0;
-    %load/vec4 v0000026045292db0_0;
+    %wait E_0000023cfe3a6490;
+    %load/vec4 v0000023cfe36e650_0;
     %flag_set/vec4 8;
     %jmp/0xz  T_0.0, 8;
     %pushi/vec4 0, 0, 32;
-    %store/vec4 v00000260452c4350_0, 0, 32;
+    %store/vec4 v0000023cfe419a90_0, 0, 32;
 T_0.2 ;
-    %load/vec4 v00000260452c4350_0;
+    %load/vec4 v0000023cfe419a90_0;
     %cmpi/s 32, 0, 32;
     %jmp/0xz T_0.3, 5;
     %pushi/vec4 0, 0, 32;
-    %ix/getv/s 3, v00000260452c4350_0;
+    %ix/getv/s 3, v0000023cfe419a90_0;
     %ix/load 4, 10, 0; Constant delay
-    %assign/vec4/a/d v0000026045292d10, 0, 4;
-    %load/vec4 v00000260452c4350_0;
+    %assign/vec4/a/d v0000023cfe36e5b0, 0, 4;
+    %load/vec4 v0000023cfe419a90_0;
     %addi 1, 0, 32;
-    %store/vec4 v00000260452c4350_0, 0, 32;
+    %store/vec4 v0000023cfe419a90_0, 0, 32;
     %jmp T_0.2;
 T_0.3 ;
     %jmp T_0.1;
 T_0.0 ;
-    %load/vec4 v00000260452c4490_0;
+    %load/vec4 v0000023cfe419e50_0;
     %flag_set/vec4 9;
     %flag_get/vec4 9;
     %jmp/0 T_0.6, 9;
-    %load/vec4 v0000026045292e50_0;
+    %load/vec4 v0000023cfe3aa3d0_0;
     %pushi/vec4 0, 0, 5;
     %cmp/ne;
     %flag_get/vec4 6;
@@ -92,142 +92,142 @@ T_0.0 ;
 T_0.6;
     %flag_set/vec4 8;
     %jmp/0xz  T_0.4, 8;
-    %load/vec4 v0000026045292ef0_0;
-    %load/vec4 v0000026045292e50_0;
+    %load/vec4 v0000023cfe3aa470_0;
+    %load/vec4 v0000023cfe3aa3d0_0;
     %pad/u 7;
     %ix/vec4 3;
     %ix/load 4, 10, 0; Constant delay
-    %assign/vec4/a/d v0000026045292d10, 0, 4;
+    %assign/vec4/a/d v0000023cfe36e5b0, 0, 4;
 T_0.4 ;
 T_0.1 ;
     %jmp T_0;
     .thread T_0;
-    .scope S_00000260452b8100;
+    .scope S_0000023cfe36bd20;
 T_1 ;
     %pushi/vec4 1, 0, 1;
-    %store/vec4 v00000260452c43f0_0, 0, 1;
+    %store/vec4 v0000023cfe419450_0, 0, 1;
 T_1.0 ;
-    %delay 50, 0;
-    %load/vec4 v00000260452c43f0_0;
+    %delay 40, 0;
+    %load/vec4 v0000023cfe419450_0;
     %inv;
-    %store/vec4 v00000260452c43f0_0, 0, 1;
+    %store/vec4 v0000023cfe419450_0, 0, 1;
     %jmp T_1.0;
     %end;
     .thread T_1;
-    .scope S_00000260452b8100;
+    .scope S_0000023cfe36bd20;
 T_2 ;
     %vpi_call 2 35 "$dumpfile", "reg_file_tb.vcd" {0 0 0};
-    %vpi_call 2 36 "$dumpvars", 32'sb00000000000000000000000000000000, S_00000260452b8100 {0 0 0};
-    %vpi_call 2 37 "$monitor", "Time: %0t | WRITE_ENABLE: %b | WRITE_ADDR: %d | OUT_ADDR1: %d | OUT_ADDR2: %d | WRITE_DATA: %d | DATA_OUT1: %d | DATA_OUT2: %d", $time, v00000260452c3b30_0, v00000260452c3ef0_0, v00000260452c3e50_0, v00000260452c3950_0, v00000260452c3a90_0, v00000260452c3bd0_0, v00000260452c4670_0 {0 0 0};
+    %vpi_call 2 36 "$dumpvars", 32'sb00000000000000000000000000000000, S_0000023cfe36bd20 {0 0 0};
+    %vpi_call 2 37 "$monitor", "Time: %0t | WRITE_ENABLE: %b | WRITE_ADDR: %d | OUT_ADDR1: %d | OUT_ADDR2: %d | WRITE_DATA: %d | DATA_OUT1: %d | DATA_OUT2: %d", $time, v0000023cfe419ef0_0, v0000023cfe419270_0, v0000023cfe419810_0, v0000023cfe419d10_0, v0000023cfe4198b0_0, v0000023cfe419c70_0, v0000023cfe4193b0_0 {0 0 0};
     %pushi/vec4 1, 0, 1;
-    %store/vec4 v00000260452c3d10_0, 0, 1;
+    %store/vec4 v0000023cfe419950_0, 0, 1;
     %pushi/vec4 0, 0, 1;
-    %store/vec4 v00000260452c3b30_0, 0, 1;
+    %store/vec4 v0000023cfe419ef0_0, 0, 1;
     %pushi/vec4 0, 0, 5;
-    %store/vec4 v00000260452c3ef0_0, 0, 5;
+    %store/vec4 v0000023cfe419270_0, 0, 5;
     %pushi/vec4 0, 0, 5;
-    %store/vec4 v00000260452c3e50_0, 0, 5;
+    %store/vec4 v0000023cfe419810_0, 0, 5;
     %pushi/vec4 0, 0, 5;
-    %store/vec4 v00000260452c3950_0, 0, 5;
+    %store/vec4 v0000023cfe419d10_0, 0, 5;
     %pushi/vec4 0, 0, 32;
-    %store/vec4 v00000260452c3a90_0, 0, 32;
-    %delay 100, 0;
+    %store/vec4 v0000023cfe4198b0_0, 0, 32;
+    %delay 80, 0;
     %pushi/vec4 0, 0, 1;
-    %store/vec4 v00000260452c3d10_0, 0, 1;
-    %delay 100, 0;
+    %store/vec4 v0000023cfe419950_0, 0, 1;
+    %delay 80, 0;
     %pushi/vec4 1, 0, 1;
-    %store/vec4 v00000260452c3b30_0, 0, 1;
+    %store/vec4 v0000023cfe419ef0_0, 0, 1;
     %pushi/vec4 1, 0, 5;
-    %store/vec4 v00000260452c3ef0_0, 0, 5;
+    %store/vec4 v0000023cfe419270_0, 0, 5;
     %pushi/vec4 42, 0, 32;
-    %store/vec4 v00000260452c3a90_0, 0, 32;
-    %delay 100, 0;
+    %store/vec4 v0000023cfe4198b0_0, 0, 32;
+    %delay 80, 0;
     %pushi/vec4 0, 0, 1;
-    %store/vec4 v00000260452c3b30_0, 0, 1;
-    %delay 100, 0;
+    %store/vec4 v0000023cfe419ef0_0, 0, 1;
+    %delay 80, 0;
     %pushi/vec4 1, 0, 5;
-    %store/vec4 v00000260452c3e50_0, 0, 5;
+    %store/vec4 v0000023cfe419810_0, 0, 5;
     %pushi/vec4 0, 0, 5;
-    %store/vec4 v00000260452c3950_0, 0, 5;
-    %delay 100, 0;
-    %load/vec4 v00000260452c3bd0_0;
+    %store/vec4 v0000023cfe419d10_0, 0, 5;
+    %delay 80, 0;
+    %load/vec4 v0000023cfe419c70_0;
     %cmpi/ne 42, 0, 32;
     %jmp/0xz  T_2.0, 6;
-    %vpi_call 2 69 "$display", "Test failed: DATA_OUT1 = %d, expected 42", v00000260452c3bd0_0 {0 0 0};
+    %vpi_call 2 69 "$display", "Test failed: DATA_OUT1 = %d, expected 42", v0000023cfe419c70_0 {0 0 0};
     %jmp T_2.1;
 T_2.0 ;
-    %vpi_call 2 71 "$display", "Test passed: DATA_OUT1 = %d", v00000260452c3bd0_0 {0 0 0};
+    %vpi_call 2 71 "$display", "Test passed: DATA_OUT1 = %d", v0000023cfe419c70_0 {0 0 0};
 T_2.1 ;
-    %load/vec4 v00000260452c4670_0;
+    %load/vec4 v0000023cfe4193b0_0;
     %cmpi/ne 0, 0, 32;
     %jmp/0xz  T_2.2, 6;
-    %vpi_call 2 74 "$display", "Test failed: DATA_OUT2 = %d, expected 0", v00000260452c4670_0 {0 0 0};
+    %vpi_call 2 74 "$display", "Test failed: DATA_OUT2 = %d, expected 0", v0000023cfe4193b0_0 {0 0 0};
     %jmp T_2.3;
 T_2.2 ;
-    %vpi_call 2 76 "$display", "Test passed: DATA_OUT2 = %d", v00000260452c4670_0 {0 0 0};
+    %vpi_call 2 76 "$display", "Test passed: DATA_OUT2 = %d", v0000023cfe4193b0_0 {0 0 0};
 T_2.3 ;
-    %delay 100, 0;
+    %delay 80, 0;
     %pushi/vec4 1, 0, 1;
-    %store/vec4 v00000260452c3b30_0, 0, 1;
+    %store/vec4 v0000023cfe419ef0_0, 0, 1;
     %pushi/vec4 2, 0, 5;
-    %store/vec4 v00000260452c3ef0_0, 0, 5;
+    %store/vec4 v0000023cfe419270_0, 0, 5;
     %pushi/vec4 100, 0, 32;
-    %store/vec4 v00000260452c3a90_0, 0, 32;
-    %delay 100, 0;
+    %store/vec4 v0000023cfe4198b0_0, 0, 32;
+    %delay 80, 0;
     %pushi/vec4 0, 0, 1;
-    %store/vec4 v00000260452c3b30_0, 0, 1;
-    %delay 100, 0;
+    %store/vec4 v0000023cfe419ef0_0, 0, 1;
+    %delay 80, 0;
     %pushi/vec4 2, 0, 5;
-    %store/vec4 v00000260452c3e50_0, 0, 5;
+    %store/vec4 v0000023cfe419810_0, 0, 5;
     %pushi/vec4 1, 0, 5;
-    %store/vec4 v00000260452c3950_0, 0, 5;
-    %delay 100, 0;
-    %load/vec4 v00000260452c3bd0_0;
+    %store/vec4 v0000023cfe419d10_0, 0, 5;
+    %delay 80, 0;
+    %load/vec4 v0000023cfe419c70_0;
     %cmpi/ne 100, 0, 32;
     %jmp/0xz  T_2.4, 6;
-    %vpi_call 2 94 "$display", "Test failed: DATA_OUT1 = %d, expected 100", v00000260452c3bd0_0 {0 0 0};
+    %vpi_call 2 94 "$display", "Test failed: DATA_OUT1 = %d, expected 100", v0000023cfe419c70_0 {0 0 0};
     %jmp T_2.5;
 T_2.4 ;
-    %vpi_call 2 96 "$display", "Test passed: DATA_OUT1 = %d", v00000260452c3bd0_0 {0 0 0};
+    %vpi_call 2 96 "$display", "Test passed: DATA_OUT1 = %d", v0000023cfe419c70_0 {0 0 0};
 T_2.5 ;
-    %load/vec4 v00000260452c4670_0;
+    %load/vec4 v0000023cfe4193b0_0;
     %cmpi/ne 42, 0, 32;
     %jmp/0xz  T_2.6, 6;
-    %vpi_call 2 99 "$display", "Test failed: DATA_OUT2 = %d, expected 42", v00000260452c4670_0 {0 0 0};
+    %vpi_call 2 99 "$display", "Test failed: DATA_OUT2 = %d, expected 42", v0000023cfe4193b0_0 {0 0 0};
     %jmp T_2.7;
 T_2.6 ;
-    %vpi_call 2 101 "$display", "Test passed: DATA_OUT2 = %d", v00000260452c4670_0 {0 0 0};
+    %vpi_call 2 101 "$display", "Test passed: DATA_OUT2 = %d", v0000023cfe4193b0_0 {0 0 0};
 T_2.7 ;
-    %delay 100, 0;
+    %delay 80, 0;
     %pushi/vec4 1, 0, 1;
-    %store/vec4 v00000260452c3b30_0, 0, 1;
+    %store/vec4 v0000023cfe419ef0_0, 0, 1;
     %pushi/vec4 0, 0, 5;
-    %store/vec4 v00000260452c3ef0_0, 0, 5;
+    %store/vec4 v0000023cfe419270_0, 0, 5;
     %pushi/vec4 123, 0, 32;
-    %store/vec4 v00000260452c3a90_0, 0, 32;
-    %delay 100, 0;
+    %store/vec4 v0000023cfe4198b0_0, 0, 32;
+    %delay 80, 0;
     %pushi/vec4 0, 0, 1;
-    %store/vec4 v00000260452c3b30_0, 0, 1;
+    %store/vec4 v0000023cfe419ef0_0, 0, 1;
     %pushi/vec4 0, 0, 5;
-    %store/vec4 v00000260452c3e50_0, 0, 5;
+    %store/vec4 v0000023cfe419810_0, 0, 5;
     %pushi/vec4 1, 0, 5;
-    %store/vec4 v00000260452c3950_0, 0, 5;
-    %delay 100, 0;
-    %load/vec4 v00000260452c3bd0_0;
+    %store/vec4 v0000023cfe419d10_0, 0, 5;
+    %delay 80, 0;
+    %load/vec4 v0000023cfe419c70_0;
     %cmpi/ne 0, 0, 32;
     %jmp/0xz  T_2.8, 6;
-    %vpi_call 2 117 "$display", "Test failed: DATA_OUT1 = %d, expected 0", v00000260452c3bd0_0 {0 0 0};
+    %vpi_call 2 117 "$display", "Test failed: DATA_OUT1 = %d, expected 0", v0000023cfe419c70_0 {0 0 0};
     %jmp T_2.9;
 T_2.8 ;
-    %vpi_call 2 119 "$display", "Test passed: DATA_OUT1 = %d", v00000260452c3bd0_0 {0 0 0};
+    %vpi_call 2 119 "$display", "Test passed: DATA_OUT1 = %d", v0000023cfe419c70_0 {0 0 0};
 T_2.9 ;
-    %load/vec4 v00000260452c4670_0;
+    %load/vec4 v0000023cfe4193b0_0;
     %cmpi/ne 42, 0, 32;
     %jmp/0xz  T_2.10, 6;
-    %vpi_call 2 122 "$display", "Test failed: DATA_OUT2 = %d, expected 42", v00000260452c4670_0 {0 0 0};
+    %vpi_call 2 122 "$display", "Test failed: DATA_OUT2 = %d, expected 42", v0000023cfe4193b0_0 {0 0 0};
     %jmp T_2.11;
 T_2.10 ;
-    %vpi_call 2 124 "$display", "Test passed: DATA_OUT2 = %d", v00000260452c4670_0 {0 0 0};
+    %vpi_call 2 124 "$display", "Test passed: DATA_OUT2 = %d", v0000023cfe4193b0_0 {0 0 0};
 T_2.11 ;
     %vpi_call 2 127 "$finish" {0 0 0};
     %end;
