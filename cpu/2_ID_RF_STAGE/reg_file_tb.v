@@ -25,7 +25,7 @@ module reg_file_tb;
     // Clock generation
     initial begin
         CLK = 1;
-        forever #5 CLK = ~CLK; // Toggle clock every 5 time units
+        forever #4 CLK = ~CLK; // Toggle clock every 5 time units
     end
 
     // Testbench logic
@@ -47,23 +47,23 @@ module reg_file_tb;
         WRITE_DATA = 32'd0;
 
         // Wait for a few clock cycles
-        #10;
+        #8;
 
         // Deassert reset
         RESET = 0;
-        #10;
+        #8;
 
         // Test writing to the register file
         WRITE_ENABLE = 1;
         WRITE_ADDR = 5'd1; // Write to register 1
         WRITE_DATA = 32'd42; // Write value 42
-        #10; // Wait for a clock cycle
+        #8; // Wait for a clock cycle
         WRITE_ENABLE = 0; // Disable write
         
-        #10; // Wait for a clock cycle
+        #8; // Wait for a clock cycle
         OUT_ADDR1 = 5'd1; // Read from register 1
         OUT_ADDR2 = 5'd0; // Read from register 0 (should always be 0)
-        #10; // Wait for a clock cycle
+        #8; // Wait for a clock cycle
         // Check outputs
         if (DATA_OUT1 !== 32'd42) begin
             $display("Test failed: DATA_OUT1 = %d, expected 42", DATA_OUT1);
@@ -77,18 +77,18 @@ module reg_file_tb;
         end
 
         // Test writing to another register
-        #10;
+        #8;
         WRITE_ENABLE = 1;
         WRITE_ADDR = 5'd2; // Write to register 2
         WRITE_DATA = 32'd100; // Write value 100
-        #10; // Wait for a clock cycle
+        #8; // Wait for a clock cycle
         WRITE_ENABLE = 0; // Disable write
 
 
-        #10; // Wait for a clock cycle
+        #8; // Wait for a clock cycle
         OUT_ADDR1 = 5'd2; // Read from register 2
         OUT_ADDR2 = 5'd1; // Read from register 1
-        #10; // Wait for a clock cycle
+        #8; // Wait for a clock cycle
         // Check outputs
         if (DATA_OUT1 !== 32'd100) begin
             $display("Test failed: DATA_OUT1 = %d, expected 100", DATA_OUT1);
@@ -102,16 +102,16 @@ module reg_file_tb;
         end
 
         // Test writing to register 0 (should not change value)
-        #10;
+        #8;
         WRITE_ENABLE = 1;
         WRITE_ADDR = 5'd0; // Write to register 0 (should not change value)
         WRITE_DATA = 32'd123; // Write value 123
-        #10; // Wait for a clock cycle
+        #8; // Wait for a clock cycle
         WRITE_ENABLE = 0; // Disable write
 
         OUT_ADDR1 = 5'd0; // Read from register 0
         OUT_ADDR2 = 5'd1; // Read from register 1
-        #10; // Wait for a clock cycle
+        #8; // Wait for a clock cycle
         // Check outputs
         if (DATA_OUT1 !== 32'd0) begin
             $display("Test failed: DATA_OUT1 = %d, expected 0", DATA_OUT1);
