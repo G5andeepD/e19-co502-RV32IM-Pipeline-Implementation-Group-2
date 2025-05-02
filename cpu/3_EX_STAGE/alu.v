@@ -1,4 +1,4 @@
-`include "../constants/encordings.v"
+`include "./constants/encordings.v"
 
 `timescale 1ns/100ps
 
