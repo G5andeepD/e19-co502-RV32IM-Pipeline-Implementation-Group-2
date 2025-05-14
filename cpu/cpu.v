@@ -52,6 +52,7 @@ wire [1:0] mem_write_ex, mem_read_ex; // Memory write/read signals from EX stage
 wire [1:0] reg_write_select_ex; // Register write selection signal from EX stage
 wire reg_write_enable_ex; // Register write enable signal from EX stage
 wire [2:0] branch_jump_ex; // Branch/jump signal from EX stage
+wire zero;
 
 //MA
 wire [31:0] pc_ma; // Program counter output from MA stage
@@ -200,6 +201,8 @@ alu alu(
     .DATA1(alu_input1_ex), // ALU input 1
     .DATA2(alu_input2_ex), // ALU input 2
     .RESULT(alu_result_ex) // ALU result output
+    .ZERO(zero) // Zero flag output
+
 );
 
 
