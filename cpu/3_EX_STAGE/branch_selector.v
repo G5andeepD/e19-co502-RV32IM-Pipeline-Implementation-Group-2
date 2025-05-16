@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module BRANCH_SELECTOR (
+module branch_selector (
     input  [1:0] BRANCH_SEL, // From control unit
     input        ZERO,       // From ALU
     output reg   PC_SEL      // Output: 1 if branch is taken
