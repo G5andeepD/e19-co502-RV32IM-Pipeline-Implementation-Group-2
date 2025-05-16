@@ -77,7 +77,7 @@ module cpu_tb;
         
 
         // Finish simulation after some time
-        #100;
+        #300;
         $finish;
     end
 endmodule

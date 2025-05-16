@@ -2,7 +2,9 @@
 // `include "1_IF_STAGE/imem.v"
 `include "2_ID_RF_STAGE/reg_file.v"
 `include "2_ID_RF_STAGE/control_unit.v"
+`include "2_ID_RF_STAGE/sign_extender.v"
 `include "3_EX_STAGE/alu.v"
+`include "3_EX_STAGE/branch_selector.v"
 `include "muxes/mux_32b_2to1.v"
 `include "muxes/mux_32b_4to1.v"
 `include "adders/pc_adder_32b.v"
@@ -27,17 +29,19 @@ module cpu(
 //Wires
 //IF
 wire [31:0] pc_initial_if, pc_plus_4_if; // PC values
+wire pc_sel;
 
 //ID
 wire [31:0] instr_id; // Instruction output from IF stage
 wire [31:0] pc_id; // Program counter output from ID stage
 wire [31:0] rs_data_id, rt_data_id; // Register data outputs from ID stage
+wire [31:0] imm_id; // Immediate value from ID stage
 wire [2:0] imm_sel_id; // Immediate selection signal from ID stage
 wire [4:0] aluop_id; // ALU operation code from ID stage
-wire [2:0] branch_jump_id; // Branch/jump signal from ID stage
+wire [1:0] branch_jump_id; // Branch/jump signal from ID stage
 wire [1:0] mem_write_id, mem_read_id; // Memory write/read signals from ID stage
 wire [1:0] reg_write_select_id; // Register write selection signal from ID stage
-wire op1_sel_id, op2_sel_id, reg_write_enable_id; // Register write enable signal from ID stage
+wire op_sel_id, reg_write_enable_id; // Register write enable signal from ID stage
 
 //EX
 wire [4:0] instr_ex;
@@ -45,13 +49,14 @@ wire [31:0] pc_ex; // Program counter output from EX stage
 wire [31:0] rs_data_ex, rt_data_ex; // Register data outputs from EX stage
 wire [4:0] alu_op_ex; // ALU operation code from EX stage
 wire [31:0] alu_result_ex; // ALU result output from EX stage
-wire [31:0] alu_input1_ex, alu_input2_ex; // ALU input values from EX stage
+wire [31:0] alu_input2_ex; // ALU input values from EX stage
 wire [31:0] imm_ex; // Immediate value from EX stage
-wire op1_sel_ex, op2_sel_ex; // Operand selection signals from EX stage
+wire op_sel_ex; // Operand selection signals from EX stage
 wire [1:0] mem_write_ex, mem_read_ex; // Memory write/read signals from EX stage
 wire [1:0] reg_write_select_ex; // Register write selection signal from EX stage
 wire reg_write_enable_ex; // Register write enable signal from EX stage
-wire [2:0] branch_jump_ex; // Branch/jump signal from EX stage
+wire [1:0] branch_jump_ex; // Branch/jump signal from EX stage
+wire zero;
 
 //MA
 wire [31:0] pc_ma; // Program counter output from MA stage
@@ -78,7 +83,7 @@ wire [31:0] reg_write_data_wb; // Register write data output from WB stage
 mux_32b_2to1 pc_mux(
     .in0(pc_plus_4_if), // Current PC value
     .in1(alu_result_ex), // Next PC value
-    .sel(1'b0), // Select signal (0 for in0, 1 for in1)
+    .sel(pc_sel), // Select signal (0 for in0, 1 for in1)
     .out(pc_initial_if) // Output PC value
 );
 
@@ -131,14 +136,20 @@ control_unit control_unit(
     .funct3(instr_id[14:12]), // Function code from instruction
     .funct7(instr_id[31:25]), // Function code from instruction
     .imm_sel(imm_sel_id), // Immediate selection signal output
-    .aluop(aluop_id), // ALU operation code output
-    .branch_jump(branch_jump_id), // Branch/jump signal output
+    .alu_op(aluop_id), // ALU operation code output
+    .branch_sel(branch_jump_id), // Branch/jump signal output
     .mem_write(mem_write_id), // Memory write signal output
     .mem_read(mem_read_id), // Memory read signal output
-    .reg_write_select(reg_write_select_id), // Register write selection signal output
-    .op1_sel(op1_sel_id), // Operand 1 selection signal output
-    .op2_sel(op2_sel_id), // Operand 2 selection signal output
-    .reg_write_enable(reg_write_enable_id) // Register write enable signal output
+    .write_back_sel(reg_write_select_id), // Register write selection signal output
+    .use_imm(op_sel_id), // Operand 2 selection signal output
+    .reg_write_en(reg_write_enable_id) // Register write enable signal output
+);
+
+//Sign Extender
+sign_extender sign_extender(
+    .instr_25(instr_id[31:7]), // Input instruction
+    .imm_sel(imm_sel_id), // Immediate selection signal
+    .imm_out(imm_id) // Output immediate value
 );
 
   
@@ -151,11 +162,10 @@ ID_EX_reg id_ex_reg(
     .PC_PLUS_4(pc_id), // PC+4 value from IF_ID stage
     .READ_DATA1(rs_data_id), // Read data 1 from register file
     .READ_DATA2(rt_data_id), // Read data 2 from register file
-    .IMMEDIATE({20'b0, instr_id[31:20]}), // Immediate value from instruction
+    .IMMEDIATE(imm_id), // Immediate value from instruction
     .ALU_OP(aluop_id), // ALU operation code from control unit
     .BRANCH_JUMP(branch_jump_id), // Branch/jump signal from control unit
-    .OP1_SEL(op1_sel_id), // Operand 1 selection signal from control unit
-    .OP2_SEL(op2_sel_id), // Operand 2 selection signal from control unit
+    .OP_SEL(op_sel_id), // Operand 2 selection signal from control unit
     .MEM_WRITE(mem_write_id), // Memory write signal from control unit
     .MEM_READ(mem_read_id), // Memory read signal from control unit
     .REG_WRITE_SEL(reg_write_select_id), // Register write selection signal from control unit
@@ -169,8 +179,7 @@ ID_EX_reg id_ex_reg(
     .OUT_IMMEDIATE(imm_ex), // Output immediate value to EX stage
     .OUT_ALU_OP(alu_op_ex), // Output ALU operation code to EX stage
     .OUT_BRANCH_JUMP(branch_jump_ex), // Output branch/jump signal to EX stage
-    .OUT_OP1_SEL(op1_sel_ex), // Output operand 1 selection signal to EX stage
-    .OUT_OP2_SEL(op2_sel_ex), // Output operand 2 selection signal to EX stage
+    .OUT_OP_SEL(op_sel_ex), // Output operand 2 selection signal to EX stage
     .OUT_MEM_WRITE(mem_write_ex), // Output memory write signal to EX stage
     .OUT_MEM_READ(mem_read_ex), // Output memory read signal to EX stage
     .OUT_REG_WRITE_SEL(reg_write_select_ex), // Output register write selection signal to EX stage
@@ -181,25 +190,28 @@ ID_EX_reg id_ex_reg(
 // EX Stage
 
 //MUXes
-mux_32b_2to1 alu_input1_mux(
-    .in0(rs_data_ex), // Input 0 (rs_data_ex)
-    .in1(imm_ex), // Input 1 (immediate value)
-    .sel(op1_sel_ex), // Select signal (0 for in0, 1 for in1)
-    .out(alu_input1_ex) // Output ALU input 1
-);
 mux_32b_2to1 alu_input2_mux(
     .in0(rt_data_ex), // Input 0 (rt_data_ex)
     .in1(imm_ex), // Input 1 (immediate value)
-    .sel(op2_sel_ex), // Select signal (0 for in0, 1 for in1)
+    .sel(op_sel_ex), // Select signal (0 for in0, 1 for in1)
     .out(alu_input2_ex) // Output ALU input 2
 );
 
 //ALU
 alu alu(
     .SELECT(alu_op_ex), // ALU operation code
-    .DATA1(alu_input1_ex), // ALU input 1
+    .DATA1(rs_data_ex), // ALU input 1
     .DATA2(alu_input2_ex), // ALU input 2
-    .RESULT(alu_result_ex) // ALU result output
+    .RESULT(alu_result_ex), // ALU result output
+    .ZERO(zero) // Zero flag output
+
+);
+
+//Branch Selector
+branch_selector branch_selector(
+    .BRANCH_SEL(branch_jump_ex), // Branch/jump signal
+    .ZERO(zero), // Zero flag
+    .PC_SEL(pc_sel) // Output PC value
 );
 
 

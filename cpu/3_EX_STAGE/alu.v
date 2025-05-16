@@ -5,7 +5,8 @@
 module alu (
     input  [31:0] DATA1, DATA2,
     input  [4:0]  SELECT,
-    output reg [31:0] RESULT
+    output reg [31:0] RESULT,
+    output reg ZERO
 );
 
     // Intermediate wires
@@ -67,6 +68,13 @@ module alu (
 
             default: RESULT = 32'd0;
         endcase
+        begin
+            // Set the zero flag
+            if (RESULT == 32'd0)
+                ZERO = 1'b1;
+            else
+                ZERO = 1'b0;
+        end
     end
 
 endmodule
