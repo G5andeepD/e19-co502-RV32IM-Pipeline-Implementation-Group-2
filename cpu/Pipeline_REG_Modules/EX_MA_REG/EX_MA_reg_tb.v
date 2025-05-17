@@ -14,6 +14,7 @@ module EX_MA_reg_tb;
     reg [1:0] MEM_READ; // Input memory read signal
     reg [1:0] REG_WRITE_SEL; // Input register write select signal
     reg REG_WRITE_ENABLE; // Input register write enable signal
+    reg PC_SEL;
     reg CLK; // Clock signal
     reg RESET; // Reset signal
 
@@ -25,6 +26,7 @@ module EX_MA_reg_tb;
     wire [1:0] OUT_MEM_READ; // Output memory read signal
     wire [1:0] OUT_REG_WRITE_SEL; // Output register write select signal
     wire OUT_REG_WRITE_ENABLE; // Output register write enable signal
+    wire OUT_PC_SEL;
 
     // Instantiate the EX_MA_reg module
     EX_MA_reg ex_ma_reg_t(
@@ -36,6 +38,7 @@ module EX_MA_reg_tb;
         .MEM_READ(MEM_READ),
         .REG_WRITE_SEL(REG_WRITE_SEL),
         .REG_WRITE_ENABLE(REG_WRITE_ENABLE),
+        .PC_SEL(PC_SEL),
         .CLK(CLK),
         .RESET(RESET),
         .OUT_ALU_RESULT(OUT_ALU_RESULT),
@@ -45,7 +48,8 @@ module EX_MA_reg_tb;
         .OUT_MEM_WRITE(OUT_MEM_WRITE),
         .OUT_MEM_READ(OUT_MEM_READ),
         .OUT_REG_WRITE_SEL(OUT_REG_WRITE_SEL),
-        .OUT_REG_WRITE_ENABLE(OUT_REG_WRITE_ENABLE)
+        .OUT_REG_WRITE_ENABLE(OUT_REG_WRITE_ENABLE),
+        .OUT_PC_SEL(OUT_PC_SEL)
     );
 
     // Clock generation

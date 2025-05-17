@@ -16,6 +16,7 @@ module EX_MA_reg (
     MEM_READ, // Input memory read signal from EX stage
     REG_WRITE_SEL, // Input register write select signal from EX stage
     REG_WRITE_ENABLE, // Input register write enable signal from EX stage
+    PC_SEL,
     CLK, // Clock signal
     RESET, // Reset signal
     OUT_ALU_RESULT, // Output ALU result to MA stage
@@ -25,7 +26,8 @@ module EX_MA_reg (
     OUT_MEM_WRITE, // Output memory write signal to MA stage
     OUT_MEM_READ, // Output memory read signal to MA stage
     OUT_REG_WRITE_SEL, // Output register write select signal to MA stage
-    OUT_REG_WRITE_ENABLE // Output register write enable signal to MA stage
+    OUT_REG_WRITE_ENABLE, // Output register write enable signal to MA stage
+    OUT_PC_SEL
 );
 
     // Defining input/output ports
@@ -37,6 +39,7 @@ module EX_MA_reg (
     input [1:0] MEM_READ; // Input memory read signal
     input [1:0] REG_WRITE_SEL; // Input register write select signal
     input REG_WRITE_ENABLE; // Input register write enable signal
+    input PC_SEL;
     input CLK; // Clock signal
     input RESET; // Reset signal
 
@@ -48,6 +51,7 @@ module EX_MA_reg (
     output reg [1:0] OUT_MEM_READ; // Output memory read signal
     output reg [1:0] OUT_REG_WRITE_SEL; // Output register write select signal
     output reg OUT_REG_WRITE_ENABLE; // Output register write enable signal
+    output reg OUT_PC_SEL;
 
     // On the rising edge of the clock or when reset is high
     always @ (posedge CLK or posedge RESET) begin
@@ -61,6 +65,7 @@ module EX_MA_reg (
             OUT_MEM_READ <= 2'b00;
             OUT_REG_WRITE_SEL <= 2'b00;
             OUT_REG_WRITE_ENABLE <= 1'b0;
+            OUT_PC_SEL <= 1'b0;
         end else begin
             // Otherwise, capture the input values
             OUT_ALU_RESULT <= ALU_RESULT;
@@ -71,6 +76,7 @@ module EX_MA_reg (
             OUT_MEM_READ <= MEM_READ;
             OUT_REG_WRITE_SEL <= REG_WRITE_SEL;
             OUT_REG_WRITE_ENABLE <= REG_WRITE_ENABLE;
+            OUT_PC_SEL <= PC_SEL;
         end
     end
 endmodule

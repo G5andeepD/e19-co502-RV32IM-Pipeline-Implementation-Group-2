@@ -8,6 +8,7 @@
 `include "muxes/mux_32b_2to1.v"
 `include "muxes/mux_32b_4to1.v"
 `include "adders/pc_adder_32b.v"
+`include "adders/adder_32b.v"
 `include "Pipeline_REG_Modules/IF_ID_REG/IF_ID_reg.v"
 `include "Pipeline_REG_Modules/ID_EX_REG/ID_EX_reg.v"
 `include "Pipeline_REG_Modules/EX_MA_REG/EX_MA_reg.v"
@@ -29,7 +30,6 @@ module cpu(
 //Wires
 //IF
 wire [31:0] pc_initial_if, pc_plus_4_if; // PC values
-wire pc_sel;
 
 //ID
 wire [31:0] instr_id; // Instruction output from IF stage
@@ -57,14 +57,17 @@ wire [1:0] reg_write_select_ex; // Register write selection signal from EX stage
 wire reg_write_enable_ex; // Register write enable signal from EX stage
 wire [1:0] branch_jump_ex; // Branch/jump signal from EX stage
 wire zero;
+wire pc_sel_ex;
+
 
 //MA
 wire [31:0] pc_ma; // Program counter output from MA stage
-wire [31:0] alu_result_ma;
 wire [4:0] instr_ma; // Instruction output from MA stage
 wire [1:0] reg_write_select_ma; // Register write selection signal from MA stage
 wire reg_write_enable_ma; // Register write enable signal from MA stage
 wire [31:0] pc_plus_4_ma; // PC+4 value from MA stage
+wire [31:0] pc_plus_offset_ma; // PC+offset value from MA stage
+wire pc_sel_ma;
 
 //WB
 wire [31:0] dmem_out_wb; // Data input to memory from WB stage
@@ -82,8 +85,8 @@ wire [31:0] reg_write_data_wb; // Register write data output from WB stage
 //PC mux
 mux_32b_2to1 pc_mux(
     .in0(pc_plus_4_if), // Current PC value
-    .in1(alu_result_ex), // Next PC value
-    .sel(pc_sel), // Select signal (0 for in0, 1 for in1)
+    .in1(pc_plus_offset_ma), // Next PC value
+    .sel(pc_sel_ma), // Select signal (0 for in0, 1 for in1)
     .out(pc_initial_if) // Output PC value
 );
 
@@ -211,7 +214,7 @@ alu alu(
 branch_selector branch_selector(
     .BRANCH_SEL(branch_jump_ex), // Branch/jump signal
     .ZERO(zero), // Zero flag
-    .PC_SEL(pc_sel) // Output PC value
+    .PC_SEL(pc_sel_ex) // Output PC value
 );
 
 
@@ -227,6 +230,7 @@ EX_MA_reg ex_ma_reg(
     .MEM_READ(mem_read_ex),
     .REG_WRITE_SEL(reg_write_select_ex),
     .REG_WRITE_ENABLE(reg_write_enable_ex),
+    .PC_SEL(pc_sel_ex),
     .CLK(clk),
     .RESET(reset),
     .OUT_ALU_RESULT(alu_result_ma), // Output ALU result to MA stage
@@ -236,7 +240,8 @@ EX_MA_reg ex_ma_reg(
     .OUT_MEM_WRITE(mem_write_ma),
     .OUT_MEM_READ(mem_read_ma),
     .OUT_REG_WRITE_SEL(reg_write_select_ma),
-    .OUT_REG_WRITE_ENABLE(reg_write_enable_ma)
+    .OUT_REG_WRITE_ENABLE(reg_write_enable_ma),
+    .OUT_PC_SEL(pc_sel_ma)
 );
 
 //---------------------------//
@@ -245,6 +250,12 @@ EX_MA_reg ex_ma_reg(
 pc_adder_32b pc_adder_ma(
     .pc_in(pc_ma), // Input PC value
     .pc_out(pc_plus_4_ma) // Output PC+4 value
+);
+
+adder_32b pc_offset_adder(
+    .a(pc_ma), // Input PC value
+    .b(dmem_data_in),
+    .sum(pc_plus_offset_ma) // Input offset value
 );
 
 // Data memory (for MA stage)
