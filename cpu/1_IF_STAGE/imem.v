@@ -13,7 +13,7 @@ module imem(
         $readmemh("imem2.mem", mem); // Load hexadecimal instructions
     end
 
-    always @(posedge clk) begin
+    always @(negedge clk) begin
         if (reset) begin
             instruction <= 32'b0; // Clear instruction
         end else begin
