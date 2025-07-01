@@ -19,8 +19,10 @@ module ID_EX_reg (
     MEM_READ, // Input memory read signal from ID stage
     REG_WRITE_SEL, // Input register write select signal from ID stage
     REG_WRITE_ENABLE, // Input register write enable signal from ID stage
+    IS_LOAD, // Input: is this a load instruction?
     CLK, // Clock signal
     RESET, // Reset signal
+    ENABLE, // Enable signal for pipeline stalling
     OUT_DEST_REG, // Output destination register address to EX stage
     OUT_PC_PLUS_4, // Output PC+4 value to EX stage
     OUT_READ_DATA1, // Output read data 1 to EX stage
@@ -32,7 +34,8 @@ module ID_EX_reg (
     OUT_MEM_WRITE, // Output memory write signal to EX stage
     OUT_MEM_READ, // Output memory read signal to EX stage
     OUT_REG_WRITE_SEL, // Output register write select signal to EX stage
-    OUT_REG_WRITE_ENABLE // Output register write enable signal to EX stage
+    OUT_REG_WRITE_ENABLE, // Output register write enable signal to EX stage
+    OUT_IS_LOAD // Output: is this a load instruction to EX stage
 );
 
     // Defining input/output ports
@@ -48,8 +51,10 @@ module ID_EX_reg (
     input [1:0] MEM_READ; // Input memory read signal
     input [1:0] REG_WRITE_SEL; // Input register write select signal
     input REG_WRITE_ENABLE; // Input register write enable signal
+    input IS_LOAD; // Input: is this a load instruction?
     input CLK; // Clock signal
     input RESET; // Reset signal
+    input ENABLE; // Enable signal for pipeline stalling
 
     output reg [4:0] OUT_DEST_REG; // Output destination register address
     output reg [31:0] OUT_PC_PLUS_4; // Output PC+4 value
@@ -63,6 +68,7 @@ module ID_EX_reg (
     output reg [1:0] OUT_MEM_READ; // Output memory read signal
     output reg [1:0] OUT_REG_WRITE_SEL; // Output register write select signal
     output reg OUT_REG_WRITE_ENABLE; // Output register write enable signal
+    output reg OUT_IS_LOAD; // Output: is this a load instruction to EX stage
 
     // On the rising edge of the clock or when reset is high
     always @ (posedge CLK or posedge RESET) begin
@@ -80,8 +86,9 @@ module ID_EX_reg (
             OUT_MEM_READ <= 2'b00;
             OUT_REG_WRITE_SEL <= 2'b00;
             OUT_REG_WRITE_ENABLE <= 1'b0;
-        end else begin
-            // Otherwise, capture the input values
+            OUT_IS_LOAD <= 1'b0;
+        end else if (ENABLE) begin
+            // If enable is high, capture the input values
             OUT_DEST_REG <= DEST_REG;
             OUT_PC_PLUS_4 <= PC_PLUS_4;
             OUT_READ_DATA1 <= READ_DATA1;
@@ -94,6 +101,8 @@ module ID_EX_reg (
             OUT_MEM_READ <= MEM_READ;
             OUT_REG_WRITE_SEL <= REG_WRITE_SEL;
             OUT_REG_WRITE_ENABLE <= REG_WRITE_ENABLE;
+            OUT_IS_LOAD <= IS_LOAD;
         end
+        // If enable is low, keep the current values (stall)
     end
 endmodule
