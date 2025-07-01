@@ -12,6 +12,7 @@ module IF_ID_reg (
     PC_PLUS_4,   // Input PC+4 value from IF stage
     CLK,         // Clock signal
     RESET,       // Reset signal
+    ENABLE,      // Enable signal for pipeline stalling
     OUT_INSTRUCTION, // Output instruction to ID stage
     OUT_PC_PLUS_4     // Output PC+4 value to ID stage
 );
@@ -21,6 +22,7 @@ module IF_ID_reg (
     input [31:0] PC_PLUS_4;   // Input PC+4 value
     input CLK;               // Clock signal
     input RESET;             // Reset signal
+    input ENABLE;            // Enable signal for pipeline stalling
     output reg [31:0] OUT_INSTRUCTION; // Output instruction
     output reg [31:0] OUT_PC_PLUS_4;   // Output PC+4 value
 
@@ -31,10 +33,11 @@ module IF_ID_reg (
             // If reset is high, clear the output registers
             OUT_INSTRUCTION <= 32'd0;
             OUT_PC_PLUS_4 <= 32'd0;
-        end else begin
-            // Otherwise, capture the input values
+        end else if (ENABLE) begin
+            // If enable is high, capture the input values
             OUT_INSTRUCTION <= INSTRUCTION;
             OUT_PC_PLUS_4 <= PC_PLUS_4;
         end
+        // If enable is low, keep the current values (stall)
     end
 endmodule

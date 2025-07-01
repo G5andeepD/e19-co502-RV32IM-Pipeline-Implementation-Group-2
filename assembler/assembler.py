@@ -71,7 +71,14 @@ def formatInstructions(Instructions):
 def formatInstruction(ins, index):
     # final instruction
     finalIns = []
+    # Remove comments first (anything after ';' or '#')
+    if ';' in ins:
+        ins = ins.split(';')[0]
+    if '#' in ins:
+        ins = ins.split('#')[0]
     tmp_split = ins.split()
+    if len(tmp_split) == 0:  # Skip if instruction becomes empty after comment removal
+        return
     instruction_name = tmp_split.pop(0)
     finalIns.append(instruction_name.upper())
     # spliting by the ','
@@ -85,25 +92,42 @@ def formatInstruction(ins, index):
 
         for item in tmp_split_2:
             tmpItem = item
-            # removing letter x 
-            item = item.replace('x', '')
+            # removing letter x from registers
+            if item.startswith('x') and item[1:].isdigit():
+                item = item.replace('x', '')
             # identifyng the sections with brackets
             if '(' and ')' in item:
                 # removing ) from the string
                 item = item.replace(')', '')
                 tmp_split_3 = item.split('(')
                 tmp_split_3.reverse()
-                segmented_list.extend(tmp_split_3)
-            # resolwing the labels into ofsets
-            elif item.isalpha():
-                # print("Testing", tmpItem, (labelPosition[tmpItem]-index-1)*4)
-                segmented_list.append((labelPosition[tmpItem]-index-1)*4)
-            else:
+                # Remove 'x' from register names in bracket expressions
+                for i, part in enumerate(tmp_split_3):
+                    if part.startswith('x') and part[1:].isdigit():
+                        tmp_split_3[i] = part.replace('x', '')
+                segmented_list.extend(tmp_split_3)            
+            # resolwing the labels into offsets
+            elif tmpItem in labelPosition:
+                # Calculate branch offset: (target_position - current_position - 1) * 4
+                offset = (labelPosition[tmpItem] - index - 1) * 4
+                segmented_list.append(offset)
+            elif item.isdigit() or (item.startswith('-') and item[1:].isdigit()):
+                # Handle immediate values (positive or negative integers)
                 segmented_list.append(item)
+            else:
+                # If it's not a known label and not a number, it might be an unknown label
+                print(f"Warning: Unknown label or invalid operand '{tmpItem}' at instruction {index}, skipping...")
+                # Don't append anything to segmented_list for unknown labels
 
         finalIns.extend(segmented_list)
 
     #print(instruction_name, finalIns)
+    
+    # Handle J pseudoinstruction by converting to JAL x0, label
+    if finalIns[0] == 'J' and len(finalIns) == 2:
+        # Convert j label to jal x0, label
+        finalIns = ['JAL', '0', finalIns[1]]
+    
     handleInstruction(finalIns)
 
 # read the csv and create the instruction data dictionary
@@ -192,8 +216,8 @@ def handleInpFile():
         # skipping enpty lines
         if ins.strip() == '':
             continue
-        # skiping the comments
-        elif ins.strip()[0] == ';':
+        # skiping the comments (both ; and # style comments)
+        elif ins.strip()[0] == ';' or ins.strip()[0] == '#':
             continue
         elif ins.strip()[-1] == ':':
             labelPosition[ins.strip()[:(len(ins.strip())-1)]] = lineCount

@@ -13,6 +13,9 @@
 `include "Pipeline_REG_Modules/ID_EX_REG/ID_EX_reg.v"
 `include "Pipeline_REG_Modules/EX_MA_REG/EX_MA_reg.v"
 `include "Pipeline_REG_Modules/MA_WB_REG/MA_WB_reg.v"
+`include "hazard_handling/hazard_detection_unit.v"
+`include "hazard_handling/forwarding_unit.v"
+`include "hazard_handling/hazard_control_unit.v"
 
 `timescale 1ns/100ps
 
@@ -25,7 +28,20 @@ module cpu(
     output [31:0] dmem_data_in, // Data output from MA stage
     output [31:0] alu_result_ma, // Address output from MA stage
     output [1:0] mem_write_ma, // Memory write signal output from MA stage
-    output [1:0] mem_read_ma // Memory read signal output from MA stage
+    output [1:0] mem_read_ma, // Memory read signal output from MA stage
+    // Hazard handling monitoring outputs
+    output [4:0] rs1_id, // Source register 1 from ID stage
+    output [4:0] rs2_id, // Source register 2 from ID stage
+    output [31:0] rs_data_forwarded_id, // Forwarded rs1 data
+    output [31:0] rt_data_forwarded_id, // Forwarded rs2 data
+    output [1:0] forward_rs1, // Forwarding control for rs1
+    output [1:0] forward_rs2, // Forwarding control for rs2
+    output stall_pipeline, // Stall signal from hazard detection
+    output if_id_enable, // Enable signal for IF/ID register
+    output id_ex_enable, // Enable signal for ID/EX register
+    output pc_enable, // Enable signal for PC register
+    output flush_if_id, // Flush signal for IF/ID register
+    output flush_id_ex // Flush signal for ID/EX register
 );
 //Wires
 //IF
@@ -42,6 +58,7 @@ wire [1:0] branch_jump_id; // Branch/jump signal from ID stage
 wire [1:0] mem_write_id, mem_read_id; // Memory write/read signals from ID stage
 wire [1:0] reg_write_select_id; // Register write selection signal from ID stage
 wire op_sel_id, reg_write_enable_id; // Register write enable signal from ID stage
+wire is_load_id; // New: is this a load instruction in ID stage?
 
 //EX
 wire [4:0] instr_ex;
@@ -58,6 +75,7 @@ wire reg_write_enable_ex; // Register write enable signal from EX stage
 wire [1:0] branch_jump_ex; // Branch/jump signal from EX stage
 wire zero;
 wire pc_sel_ex;
+wire is_load_ex; // New: is this a load instruction in EX stage?
 
 
 //MA
@@ -78,9 +96,64 @@ wire [31:0] pc_plus_4_wb; // PC+4 value from WB stage
 wire [4:0] instr_wb; // Instruction output from WB stage
 wire [31:0] reg_write_data_wb; // Register write data output from WB stage
 
+// Hazard handling wires
+wire [4:0] rs1_id_internal, rs2_id_internal; // Register addresses from ID stage
+wire [31:0] rs_data_forwarded_id_internal, rt_data_forwarded_id_internal; // Forwarded register data
+wire [1:0] forward_rs1_internal, forward_rs2_internal; // Forwarding control signals
+wire stall_pipeline_internal; // Stall signal from hazard detection
+wire if_id_enable_internal, id_ex_enable_internal, pc_enable_internal; // Pipeline enable signals
+wire flush_if_id_internal, flush_id_ex_internal; // Pipeline flush signals
+
+//------------------------//
+// Hazard Detection Unit
+hazard_detection_unit hazard_detection_unit(
+    .rs1_id(rs1_id_internal),                    // Source register 1 from ID stage
+    .rs2_id(rs2_id_internal),                    // Source register 2 from ID stage
+    .rd_ex(instr_ex),                   // Destination register from EX stage
+    .rd_ma(instr_ma),                   // Destination register from MA stage
+    .rd_wb(instr_wb),                   // Destination register from WB stage
+    .reg_write_enable_ex(reg_write_enable_ex),
+    .reg_write_enable_ma(reg_write_enable_ma),
+    .reg_write_enable_wb(reg_write_enable_wb),
+    .is_load_ex(is_load_ex), // New: pass is_load_ex
+    .stall_pipeline(stall_pipeline_internal),
+    .forward_rs1(forward_rs1_internal),
+    .forward_rs2(forward_rs2_internal)
+);
+
+//------------------------//
+// Forwarding Unit
+forwarding_unit forwarding_unit(
+    .rs1_data_id(rs_data_id),
+    .rs2_data_id(rt_data_id),
+    .alu_result_ex(alu_result_ex),
+    .alu_result_ma(alu_result_ma),
+    .reg_write_data_wb(reg_write_data_wb),
+    .forward_rs1(forward_rs1_internal),
+    .forward_rs2(forward_rs2_internal),
+    .rs1_data_forwarded(rs_data_forwarded_id_internal),
+    .rs2_data_forwarded(rt_data_forwarded_id_internal)
+);
+
+//------------------------//
+// Hazard Control Unit
+hazard_control_unit hazard_control_unit(
+    .stall_pipeline(stall_pipeline_internal),
+    .branch_jump_ex(branch_jump_ex),
+    .pc_sel_ex(pc_sel_ex),
+    .if_id_enable(if_id_enable_internal),
+    .id_ex_enable(id_ex_enable_internal),
+    .pc_enable(pc_enable_internal),
+    .flush_if_id(flush_if_id_internal),
+    .flush_id_ex(flush_id_ex_internal)
+);
+
 //------------------------//
 // IF Stage
 
+// Extract register addresses from instruction
+assign rs1_id_internal = instr_id[19:15]; // rs1 field
+assign rs2_id_internal = instr_id[24:20]; // rs2 field
 
 //PC mux
 mux_32b_2to1 pc_mux(
@@ -100,6 +173,7 @@ pc_adder_32b pc_adder(
 pc pc(
     .clk(clk), // Clock signal
     .reset(reset), // Reset signal
+    .enable(pc_enable_internal), // Enable signal for hazard handling
     .pc_in(pc_initial_if), // Input PC value
     .pc_out(pc_out) // Output PC value
 );
@@ -112,7 +186,8 @@ IF_ID_reg if_id_reg(
     .INSTRUCTION(instr_if), // Input instruction from IF stage
     .PC_PLUS_4(pc_out), // Input PC+4 value from IF stage
     .CLK(clk), // Clock signal
-    .RESET(reset), // Reset signal
+    .RESET(reset | flush_if_id_internal), // Reset signal (including flush)
+    .ENABLE(if_id_enable_internal), // Enable signal for hazard handling
     .OUT_INSTRUCTION(instr_id), // Output instruction to ID stage
     .OUT_PC_PLUS_4(pc_id) // Output PC+4 value to ID stage
 );
@@ -126,8 +201,8 @@ reg_file reg_file(
         .CLK(clk),
         .RESET(reset),
         .WRITE_ADDR(instr_wb),
-        .OUT_ADDR1(instr_id[19:15]), // rs
-        .OUT_ADDR2(instr_id[24:20]), // rt
+        .OUT_ADDR1(rs1_id_internal), // rs1
+        .OUT_ADDR2(rs2_id_internal), // rs2
         .WRITE_DATA(reg_write_data_wb),
         .DATA_OUT1(rs_data_id),
         .DATA_OUT2(rt_data_id)
@@ -163,8 +238,8 @@ sign_extender sign_extender(
 ID_EX_reg id_ex_reg(
     .DEST_REG(instr_id[11:7]), // Destination register address from instruction
     .PC_PLUS_4(pc_id), // PC+4 value from IF_ID stage
-    .READ_DATA1(rs_data_id), // Read data 1 from register file
-    .READ_DATA2(rt_data_id), // Read data 2 from register file
+    .READ_DATA1(rs_data_forwarded_id_internal), // Forwarded read data 1
+    .READ_DATA2(rt_data_forwarded_id_internal), // Forwarded read data 2
     .IMMEDIATE(imm_id), // Immediate value from instruction
     .ALU_OP(aluop_id), // ALU operation code from control unit
     .BRANCH_JUMP(branch_jump_id), // Branch/jump signal from control unit
@@ -173,8 +248,10 @@ ID_EX_reg id_ex_reg(
     .MEM_READ(mem_read_id), // Memory read signal from control unit
     .REG_WRITE_SEL(reg_write_select_id), // Register write selection signal from control unit
     .REG_WRITE_ENABLE(reg_write_enable_id), // Register write enable signal from control unit
+    .IS_LOAD(is_load_id), // New: pass is_load_id
     .CLK(clk), // Clock signal
-    .RESET(reset), // Reset signal
+    .RESET(reset | flush_id_ex_internal), // Reset signal (including flush)
+    .ENABLE(id_ex_enable_internal), // Enable signal for hazard handling
     .OUT_DEST_REG(instr_ex), // Output destination register address to EX stage
     .OUT_PC_PLUS_4(pc_ex), // Output PC+4 value to EX stage
     .OUT_READ_DATA1(rs_data_ex), // Output read data 1 to EX stage
@@ -186,7 +263,8 @@ ID_EX_reg id_ex_reg(
     .OUT_MEM_WRITE(mem_write_ex), // Output memory write signal to EX stage
     .OUT_MEM_READ(mem_read_ex), // Output memory read signal to EX stage
     .OUT_REG_WRITE_SEL(reg_write_select_ex), // Output register write selection signal to EX stage
-    .OUT_REG_WRITE_ENABLE(reg_write_enable_ex) // Output register write enable signal to EX stage
+    .OUT_REG_WRITE_ENABLE(reg_write_enable_ex), // Output register write enable signal to EX stage
+    .OUT_IS_LOAD(is_load_ex) // New: output is_load_ex
 );
 
 //--------------------------//
@@ -293,5 +371,19 @@ mux_32b_4to1 data_mux(
     .sel(reg_write_select_wb), // Select signal
     .out(reg_write_data_wb) // Output data to memory
 );
+
+// Assign monitoring outputs
+assign rs1_id = rs1_id_internal;
+assign rs2_id = rs2_id_internal;
+assign rs_data_forwarded_id = rs_data_forwarded_id_internal;
+assign rt_data_forwarded_id = rt_data_forwarded_id_internal;
+assign forward_rs1 = forward_rs1_internal;
+assign forward_rs2 = forward_rs2_internal;
+assign stall_pipeline = stall_pipeline_internal;
+assign if_id_enable = if_id_enable_internal;
+assign id_ex_enable = id_ex_enable_internal;
+assign pc_enable = pc_enable_internal;
+assign flush_if_id = flush_if_id_internal;
+assign flush_id_ex = flush_id_ex_internal;
 
 endmodule
