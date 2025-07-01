@@ -10,7 +10,7 @@ module imem(
     reg [31:0] mem[0:1023]; // Memory array
 
     initial begin
-        $readmemh("imem.mem", mem); // Load hexadecimal instructions
+        $readmemh("imem3.mem", mem); // Load hexadecimal instructions
     end
 
     always @(negedge clk) begin
