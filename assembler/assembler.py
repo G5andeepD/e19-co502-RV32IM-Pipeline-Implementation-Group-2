@@ -1,3 +1,39 @@
+"""
+RISC-V Assembler Script
+------------------------
+
+Usage:
+    python assembler.py -i <input_file.asm> [-o <output_file.bin>] [-d <output_directory>] [--hex]
+
+Arguments:
+    -i <input_file.asm>     Required. Path to the assembly source file.
+    -o <output_file.bin>    Optional. Custom name for the output binary file. Default is based on input filename.
+    -d <output_directory>   Optional. Directory to save the output file. Default is './output'.
+    --hex                   Optional. Outputs instructions in hexadecimal format (1 line per instruction).
+                            If omitted, outputs 4 lines of 8-bit binary strings per instruction (little-endian).
+
+Description:
+    - Reads a RISC-V assembly file and translates each instruction into its corresponding 32-bit machine code.
+    - Handles labels, instruction formatting based on RV32IM CSV encoding (opcode, funct3, funct7, type).
+    - Supports instruction types: R-Type, I-Type, S-Type, B-Type, U-Type, J-Type, NOP-type.
+    - If --hex is provided, writes one hex line per instruction.
+    - If --hex is not provided, writes 4 lines of 8-bit binary strings per instruction.
+    - Pads the output file to 1024 bytes (if not using hex) with 'xxxxxxxx'.
+
+Examples:
+    python assembler.py -i program.asm
+    python assembler.py -i program.asm --hex
+    python assembler.py -i program.asm -o out.bin -d ./bin
+    python assembler.py -i src.asm -d ../cpu/build --hex
+
+Notes:
+    - Ensure RV32IM.csv is in the same directory.
+    - Labels in the assembly are resolved to byte offsets.
+    - The output directory will be created if it does not exist.
+"""
+
+
+
 import sys
 import csv
 import os
@@ -6,10 +42,9 @@ import shutil
 # instruction sets grouped by the type
 inst_data = {}
 
-# arg types
-argList = {'inp_file': '', 'out_file': ''}
-# arg keywords
-argKeys = {'-i': 'inp_file', '-o': 'out_file'}
+argList = {'inp_file': '', 'out_file': '', 'out_dir': './output', 'hex': False}
+argKeys = {'-i': 'inp_file', '-o': 'out_file', '-d': 'out_dir', '--hex': 'hex'}
+
 
 # array to load the instructions
 Instructions = []
@@ -131,8 +166,13 @@ def handleInstruction(separatedIns):
 def handleArgs():
     n = len(sys.argv)
     for i in range(1, n):
-        if (sys.argv[i].strip() in argKeys):
-            argList[argKeys[sys.argv[i]]] = sys.argv[i+1]
+        if sys.argv[i].strip() in argKeys:
+            key = argKeys[sys.argv[i]]
+            if key == 'hex':
+                argList['hex'] = True
+            else:
+                argList[key] = sys.argv[i+1]
+
 
 
 # opening the assemblyfile and reading through the file
@@ -174,15 +214,26 @@ def toBin(numOfDigits, num):
 # saving data to a .bin file
 def saveToFile(line):
     global inst_count
-    file = "../cpu/build/"+ argList['inp_file'].split('.')[0] + '.bin'
-    if not (argList['out_file'] == ''):
-        file = "../cpu/build/" + argList['out_file']
-    # saving the new line to the output file
-    f = open(file, "a")
-    for i in range(3, -1, -1):
-        f.write(line[(i*8):(i*8+8)] + "\n")
-    f.close()
-    inst_count = inst_count + 1
+
+    filename = argList['inp_file'].split('.')[0] + '.bin'
+    if argList['out_file']:
+        filename = argList['out_file']
+
+    os.makedirs(argList['out_dir'], exist_ok=True)
+    file = os.path.join(argList['out_dir'], filename)
+
+    with open(file, "a") as f:
+        if argList['hex']:
+            # Convert binary string to hex string (8 hex chars = 32 bits)
+            hex_line = f"{int(line, 2):08x}"
+            f.write(hex_line + '\n')
+        else:
+            # Default: 4 lines of 8 bits each (little-endian)
+            for i in range(3, -1, -1):
+                f.write(line[(i*8):(i*8+8)] + "\n")
+
+    inst_count += 1
+
 
 # fillig the rest of the file 
 def fillTheFile():
