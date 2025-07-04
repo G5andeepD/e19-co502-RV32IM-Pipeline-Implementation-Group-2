@@ -227,8 +227,10 @@ module hazard_test_with_memory();
         $display("Loading instructions from imem_with_hazard.mem...");
         $display("");
         
-        // Load instruction memory from file
-        $readmemh("test_hazard.mem", imem);
+        // Load instruction memory from file (Uncomment what u want)
+        // $readmemh("test_hazard.mem", imem);
+        // $readmemh("output/data_hazard_forwarding.mem", imem);
+        $readmemh("output/control_hazard_branch.mem", imem);
         
         // Initialize data memory with some values
         dmem[0] = 32'h000000AA;  // Address 0x00

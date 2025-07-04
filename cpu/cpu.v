@@ -186,8 +186,9 @@ IF_ID_reg if_id_reg(
     .INSTRUCTION(instr_if), // Input instruction from IF stage
     .PC_PLUS_4(pc_out), // Input PC+4 value from IF stage
     .CLK(clk), // Clock signal
-    .RESET(reset | flush_if_id_internal), // Reset signal (including flush)
+    .RESET(reset), // Reset signal
     .ENABLE(if_id_enable_internal), // Enable signal for hazard handling
+    .FLUSH(flush_if_id_internal), // Flush signal for control hazards
     .OUT_INSTRUCTION(instr_id), // Output instruction to ID stage
     .OUT_PC_PLUS_4(pc_id) // Output PC+4 value to ID stage
 );
@@ -250,8 +251,9 @@ ID_EX_reg id_ex_reg(
     .REG_WRITE_ENABLE(reg_write_enable_id), // Register write enable signal from control unit
     .IS_LOAD(is_load_id), // New: pass is_load_id
     .CLK(clk), // Clock signal
-    .RESET(reset | flush_id_ex_internal), // Reset signal (including flush)
+    .RESET(reset), // Reset signal
     .ENABLE(id_ex_enable_internal), // Enable signal for hazard handling
+    .FLUSH(flush_id_ex_internal), // Flush signal for control hazards
     .OUT_DEST_REG(instr_ex), // Output destination register address to EX stage
     .OUT_PC_PLUS_4(pc_ex), // Output PC+4 value to EX stage
     .OUT_READ_DATA1(rs_data_ex), // Output read data 1 to EX stage

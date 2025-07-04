@@ -23,6 +23,7 @@ module ID_EX_reg (
     CLK, // Clock signal
     RESET, // Reset signal
     ENABLE, // Enable signal for pipeline stalling
+    FLUSH, // Flush signal for control hazards
     OUT_DEST_REG, // Output destination register address to EX stage
     OUT_PC_PLUS_4, // Output PC+4 value to EX stage
     OUT_READ_DATA1, // Output read data 1 to EX stage
@@ -55,6 +56,7 @@ module ID_EX_reg (
     input CLK; // Clock signal
     input RESET; // Reset signal
     input ENABLE; // Enable signal for pipeline stalling
+    input FLUSH; // Flush signal for control hazards
 
     output reg [4:0] OUT_DEST_REG; // Output destination register address
     output reg [31:0] OUT_PC_PLUS_4; // Output PC+4 value
@@ -86,6 +88,22 @@ module ID_EX_reg (
             OUT_MEM_READ <= 2'b00;
             OUT_REG_WRITE_SEL <= 2'b00;
             OUT_REG_WRITE_ENABLE <= 1'b0;
+            OUT_IS_LOAD <= 1'b0;
+        
+        end else if (FLUSH) begin
+            // If flush is high, insert NOP control signals (no effect)
+            OUT_DEST_REG <= 5'd0; // x0 register
+            OUT_PC_PLUS_4 <= PC_PLUS_4; // Keep PC+4 value
+            OUT_READ_DATA1 <= 32'd0;
+            OUT_READ_DATA2 <= 32'd0;
+            OUT_IMMEDIATE <= 32'd0;
+            OUT_ALU_OP <= 5'd0; // No ALU operation
+            OUT_BRANCH_JUMP <= 2'b00; // No branch
+            OUT_OP_SEL <= 1'b0;
+            OUT_MEM_WRITE <= 2'b00; // No memory write
+            OUT_MEM_READ <= 2'b00; // No memory read
+            OUT_REG_WRITE_SEL <= 2'b00;
+            OUT_REG_WRITE_ENABLE <= 1'b0; // No register write
             OUT_IS_LOAD <= 1'b0;
         end else if (ENABLE) begin
             // If enable is high, capture the input values
