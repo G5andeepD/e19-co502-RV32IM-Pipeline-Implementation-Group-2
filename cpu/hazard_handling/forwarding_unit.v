@@ -14,9 +14,20 @@ module forwarding_unit(
     input [1:0] forward_rs1,     // Forwarding control for rs1
     input [1:0] forward_rs2,     // Forwarding control for rs2
     
+    // Add new inputs for store data forwarding
+    input [4:0] rt_addr_ex, // Store data register address in EX stage
+    input [31:0] store_data_ex, // Store data from EX stage (rt_data_ex)
+    input [31:0] store_data_ma, // Store data from MA stage (rt_data_ma, if needed)
+    input [31:0] store_data_wb, // Store data from WB stage (rt_data_wb, if needed)
+    input [4:0] rd_ex, rd_ma, rd_wb, // Destination registers from EX, MA, WB
+    input reg_write_enable_ex, reg_write_enable_ma, reg_write_enable_wb, // Write enables
+    
     // Forwarded data outputs
     output reg [31:0] rs1_data_forwarded,  // Forwarded rs1 data
-    output reg [31:0] rs2_data_forwarded   // Forwarded rs2 data
+    output reg [31:0] rs2_data_forwarded,   // Forwarded rs2 data
+    // New output for store data forwarding
+    output reg [1:0] forward_store_data, // Forwarding control for store data
+    output reg [31:0] store_data_forwarded // Forwarded store data
 );
 
     always @(*) begin
@@ -37,6 +48,22 @@ module forwarding_unit(
             2'b11: rs2_data_forwarded = reg_write_data_wb; // Forward from WB
             default: rs2_data_forwarded = rs2_data_id;
         endcase
+    end
+
+    // Forwarding control logic for store data
+    always @(*) begin
+        if (rt_addr_ex != 0) begin
+            if (reg_write_enable_ex && rt_addr_ex == rd_ex)
+                forward_store_data = 2'b01; // Forward from EX
+            else if (reg_write_enable_ma && rt_addr_ex == rd_ma)
+                forward_store_data = 2'b10; // Forward from MA
+            else if (reg_write_enable_wb && rt_addr_ex == rd_wb)
+                forward_store_data = 2'b11; // Forward from WB
+            else
+                forward_store_data = 2'b00; // No forwarding
+        end else begin
+            forward_store_data = 2'b00; // No forwarding
+        end
     end
 
 endmodule 

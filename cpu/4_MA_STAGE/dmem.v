@@ -7,22 +7,27 @@ module dmem(
     input [31:0] address, // Address input
     input [31:0] data_in, // Data input
     input [1:0] mem_write, // Memory write signal
-    input [1:0]mem_read, // Memory read signal
+    input [1:0] mem_read, // Memory read signal
     input clk, // Clock signal
     input reset, // Reset signal
     output reg [31:0] data_out // Data output
 );
     reg [31:0] memory [0:1023]; // Memory array (1024 words of 32 bits each)
 
-    always @(*) begin
-        if (mem_read) begin
-            data_out = memory[address]; // Read data from memory
-        end else begin
-            data_out = 32'bz; // High impedance state when not reading
+    always @(posedge clk or posedge reset) begin
+        if (reset) begin
+            // Optionally clear memory for simulation
+            // integer i;
+            // for (i = 0; i < 1024; i = i + 1) memory[i] <= 0;
+        end else if (mem_write == 2'b01) begin
+            memory[address] <= data_in;
         end
     end
 
-    always @(posedge mem_write) begin
-        memory[address] <= data_in; // Write data to memory on write signal
+    always @(*) begin
+        if (mem_read == 2'b01)
+            data_out = memory[address];
+        else
+            data_out = 32'b0;
     end
 endmodule

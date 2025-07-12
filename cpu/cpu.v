@@ -103,6 +103,12 @@ wire [1:0] forward_rs1_internal, forward_rs2_internal; // Forwarding control sig
 wire stall_pipeline_internal; // Stall signal from hazard detection
 wire if_id_enable_internal, id_ex_enable_internal, pc_enable_internal; // Pipeline enable signals
 wire flush_if_id_internal, flush_id_ex_internal; // Pipeline flush signals
+// New store data forwarding wires
+wire [4:0] rt_addr_ex; // Store data register address in EX stage (rd field)
+wire [31:0] store_data_ex, store_data_ma, store_data_wb; // Store data from EX/MA/WB stages
+wire [4:0] rd_ex, rd_ma, rd_wb; // Destination registers from EX/MA/WB stages
+wire [1:0] forward_store_data_internal; // Forwarding control for store data
+wire [31:0] store_data_forwarded_internal; // Forwarded store data
 
 //------------------------//
 // Hazard Detection Unit
@@ -118,7 +124,8 @@ hazard_detection_unit hazard_detection_unit(
     .is_load_ex(is_load_ex), // New: pass is_load_ex
     .stall_pipeline(stall_pipeline_internal),
     .forward_rs1(forward_rs1_internal),
-    .forward_rs2(forward_rs2_internal)
+    .forward_rs2(forward_rs2_internal),
+    .forward_store_data(forward_store_data_internal)
 );
 
 //------------------------//
@@ -131,6 +138,19 @@ forwarding_unit forwarding_unit(
     .reg_write_data_wb(reg_write_data_wb),
     .forward_rs1(forward_rs1_internal),
     .forward_rs2(forward_rs2_internal),
+    // New store data forwarding connections
+    .rt_addr_ex(instr_ex), // Store data register address in EX stage (rd field)
+    .store_data_ex(rt_data_ex), // Store data from EX stage
+    .store_data_ma(rt_data_ex), // For simplicity, use rt_data_ex (could be refined)
+    .store_data_wb(rt_data_ex), // For simplicity, use rt_data_ex (could be refined)
+    .rd_ex(instr_ex),
+    .rd_ma(instr_ma),
+    .rd_wb(instr_wb),
+    .reg_write_enable_ex(reg_write_enable_ex),
+    .reg_write_enable_ma(reg_write_enable_ma),
+    .reg_write_enable_wb(reg_write_enable_wb),
+    .forward_store_data(forward_store_data_internal),
+    .store_data_forwarded(store_data_forwarded_internal),
     .rs1_data_forwarded(rs_data_forwarded_id_internal),
     .rs2_data_forwarded(rt_data_forwarded_id_internal)
 );
@@ -221,7 +241,8 @@ control_unit control_unit(
     .mem_read(mem_read_id), // Memory read signal output
     .write_back_sel(reg_write_select_id), // Register write selection signal output
     .use_imm(op_sel_id), // Operand 2 selection signal output
-    .reg_write_en(reg_write_enable_id) // Register write enable signal output
+    .reg_write_en(reg_write_enable_id), // Register write enable signal output
+    .is_load(is_load_id) // New: is this a load instruction?
 );
 
 //Sign Extender
@@ -297,6 +318,16 @@ branch_selector branch_selector(
     .PC_SEL(pc_sel_ex) // Output PC value
 );
 
+// MUX for store data forwarding in EX stage
+mux_32b_4to1 store_data_mux(
+    .in0(rt_data_ex), // Normal store data from ID/EX
+    .in1(alu_result_ex), // Forward from EX
+    .in2(alu_result_ma), // Forward from MA
+    .in3(reg_write_data_wb), // Forward from WB
+    .sel(forward_store_data_internal),
+    .out(store_data_forwarded_internal)
+);
+
 
 //---------------------------//
 // EX_MA stage
@@ -305,7 +336,7 @@ EX_MA_reg ex_ma_reg(
     .ALU_RESULT(alu_result_ex), // ALU result from EX stage
     .DEST_REG(instr_ex), // Destination register address from EX stage
     .PC_PLUS_4(pc_ex), // PC+4 value from EX stage
-    .IMMEDIATE(imm_ex),
+    .IMMEDIATE(store_data_forwarded_internal), // Forwarded store data
     .MEM_WRITE(mem_write_ex),
     .MEM_READ(mem_read_ex),
     .REG_WRITE_SEL(reg_write_select_ex),
@@ -316,7 +347,7 @@ EX_MA_reg ex_ma_reg(
     .OUT_ALU_RESULT(alu_result_ma), // Output ALU result to MA stage
     .OUT_DEST_REG(instr_ma),
     .OUT_PC_PLUS_4(pc_ma), // Output PC+4 value to MA stage
-    .OUT_IMMEDIATE(dmem_data_in),
+    .OUT_IMMEDIATE(dmem_data_in), // Used as data_in for dmem
     .OUT_MEM_WRITE(mem_write_ma),
     .OUT_MEM_READ(mem_read_ma),
     .OUT_REG_WRITE_SEL(reg_write_select_ma),
@@ -366,9 +397,9 @@ MA_WB_reg ma_wb_reg(
 
 // MUX for data selection
 mux_32b_4to1 data_mux(
-    .in0(pc_plus_4_wb), // Input 2 (PC+4 value)
+    .in0(dmem_out_wb), // Input 1 (Data output from memory)
     .in1(alu_result_wb), // Input 0 (ALU result)
-    .in2(dmem_out_wb), // Input 1 (Data output from memory)
+    .in2(pc_plus_4_wb), // Input 2 (PC+4 value)
     .in3(32'b0), // Input 3 (Unused)
     .sel(reg_write_select_wb), // Select signal
     .out(reg_write_data_wb) // Output data to memory

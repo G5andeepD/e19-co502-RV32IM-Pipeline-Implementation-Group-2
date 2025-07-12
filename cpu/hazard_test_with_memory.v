@@ -1,5 +1,7 @@
 `timescale 1ns/100ps
-`include "cpu.v"
+`include "./1_IF_STAGE/imem.v"
+`include "./4_MA_STAGE/dmem.v"
+`include "./cpu.v"
 
 module hazard_test_with_memory();
 
@@ -25,7 +27,6 @@ module hazard_test_with_memory();
 
     // Instruction memory
     reg [31:0] imem [0:63]; // 64 instructions max
-    reg [31:0] dmem [0:255]; // 256 words of data memory
 
     // Instantiate the CPU with hazard handling
     cpu cpu_inst(
@@ -52,13 +53,19 @@ module hazard_test_with_memory();
         .flush_id_ex(flush_id_ex)
     );
 
-    
+    // Data memory module
+    dmem dmem_t (
+        .clk(clk),
+        .address(alu_result_ma),
+        .data_in(dmem_data_in),
+        .mem_write(mem_write_ma),
+        .mem_read(mem_read_ma),
+        .reset(reset),
+        .data_out(dmem_data_out)
+    );
 
     // Instruction fetch from memory
     assign instr_if = imem[pc_out[31:2]];
-
-    // Data memory interface
-    assign dmem_data_out = dmem[alu_result_ma[31:2]];
 
     // Clock generation
     initial begin
@@ -217,41 +224,62 @@ module hazard_test_with_memory();
                 $display("  *** PIPELINE FLUSHED - Control Hazard ***");
             end
             
+            // Print memory operations
+            if (mem_read_ma == 2'b01) begin
+                $display("Memory Read: Address=%h, Data=%h", alu_result_ma, dmem_data_out);
+            end
+            
+            if (mem_write_ma == 2'b01) begin
+                $display("Memory Write: Address=%h, Data=%h", alu_result_ma, dmem_data_in);
+            end
+            
             $display("");
         end
     end
 
     // Test stimulus
+    integer k; // Declare loop variable at the top
+    integer num_instructions;
+    integer file, c;
     initial begin
+        
         $display("=== RV32IM Pipeline Hazard Test with Memory File ===");
-        $display("Loading instructions from imem_with_hazard.mem...");
+        $display("Loading instructions from load_use_hazard.mem...");
         $display("");
         
-        // Load instruction memory from file (Uncomment what u want)
-        // $readmemh("test_hazard.mem", imem);
-        // $readmemh("output/data_hazard_forwarding.mem", imem);
+        // Load instruction memory from file
         $readmemh("output/control_hazard_branch.mem", imem);
         
-        // Initialize data memory with some values
-        dmem[0] = 32'h000000AA;  // Address 0x00
-        dmem[1] = 32'h000000BB;  // Address 0x04
-        dmem[2] = 32'h000000CC;  // Address 0x08
-        dmem[3] = 32'h000000DD;  // Address 0x0C
-        dmem[4] = 32'h000000EE;  // Address 0x10
-        dmem[5] = 32'h000000FF;  // Address 0x14
-        dmem[6] = 32'h00000111;  // Address 0x18
-        dmem[7] = 32'h00000122;  // Address 0x1C
-        dmem[8] = 32'h00000133;  // Address 0x20
-        dmem[9] = 32'h00000144;  // Address 0x24
-        dmem[10] = 32'h00000155; // Address 0x28
-        dmem[11] = 32'h00000166; // Address 0x2C
-        dmem[12] = 32'h00000177; // Address 0x30
-        dmem[13] = 32'h00000188; // Address 0x34
-        dmem[14] = 32'h00000199; // Address 0x38
-        dmem[15] = 32'h000001AA; // Address 0x3C
+        // automatically get the value for k with the number of instructions avaliable in imem (depend on the file number of instruction could change)
+        // Automatically determine the number of instructions in imem by reading the file line count
+        
+        // num_instructions = 0;
+        // file = $fopen("output/control_hazard_branch.mem", "r");
+        // if (file) begin
+        //     while (!$feof(file)) begin
+        //         c = $fgetc(file);
+        //         if (c == "\n" || c == "\r") num_instructions = num_instructions + 1;
+        //     end
+        //     $fclose(file);
+        // end else begin
+        //     $display("ERROR: Could not open instruction memory file.");
+        //     num_instructions = 3; // fallback default
+        // end
+        // // Fill the rest of instruction memory with NOPs
+        // for (k = num_instructions; k < 64; k = k + 1) // 3 = number of program instructions
+        //     imem[k] = 32'h00000013; // addi x0, x0, 0 (NOP)
         
         // Initialize
         reset = 1;
+        
+        // Initialize data memory with some values
+        // (Addresses are word addresses, not byte addresses)
+        dmem_t.memory[10] = 32'h000000AA; // Example: address 10
+        dmem_t.memory[20] = 32'h000000BB; // Example: address 14
+        dmem_t.memory[30] = 32'h000000CC; // Example: address 18
+        dmem_t.memory[40] = 32'h000000DD; // Example: address 20
+        dmem_t.memory[50] = 32'h000000EE; // Example: address 30
+        dmem_t.memory[60] = 32'h000000FF; // Example: address 40
         
         // Reset for 2 clock cycles
         #20;
@@ -260,7 +288,7 @@ module hazard_test_with_memory();
         $display("");
         
         // Run for enough cycles to complete all instructions
-        #1000;
+        #300;
         
         $display("=== Hazard Test with Memory File Completed ===");
         $display("Check the output above to verify hazard detection and resolution.");

@@ -37,7 +37,7 @@ module IF_ID_reg (
             OUT_PC_PLUS_4 <= 32'd0;
         end else if (FLUSH) begin
             // If flush is high, insert NOP instruction (ADDI x0, x0, 0)
-            OUT_INSTRUCTION <= 32'h00000013; // NOP instruction
+            OUT_INSTRUCTION <= 32'd0; // NOP instruction
             OUT_PC_PLUS_4 <= PC_PLUS_4; // Keep PC+4 value
         end else if (ENABLE) begin
             // If enable is high, capture the input values
