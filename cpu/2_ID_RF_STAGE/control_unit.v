@@ -12,10 +12,12 @@ module control_unit (
     output wire [1:0] mem_write,
     output wire [1:0] mem_read,
     output wire [1:0] write_back_sel,
-    output wire       reg_write_en
+    output wire       reg_write_en,
+    output wire       is_load // New output: is this a load instruction?
 );
 
     // ALU operation
+    assign is_load = 1'b0;
     assign #3 alu_op =
         (opcode == `OPCODE_R_TYPE) ? {funct7[5], funct7[0], funct3} :
         (opcode == `OPCODE_I_TYPE) ? {2'b00, funct3} :
@@ -48,6 +50,9 @@ module control_unit (
 
     // Memory read control
     assign #2 mem_read = (opcode == `OPCODE_LOAD) ? 2'b01 : 2'b00;
+
+    // New: is_load signal
+    assign is_load = (opcode == `OPCODE_LOAD) ? 1'b1 : 1'b0;
 
     // Select source for register write-back
     assign #2 write_back_sel =

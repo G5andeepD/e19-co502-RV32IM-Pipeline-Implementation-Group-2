@@ -27,6 +27,7 @@ module hazard_control_unit(
             if_id_enable = 1'b0;  // Stall IF/ID register
             id_ex_enable = 1'b0;  // Stall ID/EX register
             pc_enable = 1'b0;     // Stall PC
+            flush_id_ex = 1'b1;   // Insert bubble into EX stage
         end
         
         // Handle control hazards (branches/jumps)

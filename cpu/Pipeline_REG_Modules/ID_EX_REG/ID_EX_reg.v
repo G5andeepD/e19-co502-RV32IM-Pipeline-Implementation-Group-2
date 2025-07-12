@@ -122,5 +122,6 @@ module ID_EX_reg (
             OUT_IS_LOAD <= IS_LOAD;
         end
         // If enable is low, keep the current values (stall)
+        $display("[ID_EX_REG] CLK=%0d ENABLE=%b IS_LOAD(in)=%b OUT_IS_LOAD=%b", $time, ENABLE, IS_LOAD, OUT_IS_LOAD);
     end
 endmodule

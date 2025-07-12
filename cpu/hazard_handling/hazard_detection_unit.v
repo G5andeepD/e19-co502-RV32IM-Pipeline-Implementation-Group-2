@@ -18,7 +18,9 @@ module hazard_detection_unit(
     // Hazard detection outputs
     output reg stall_pipeline,   // Signal to stall the pipeline
     output reg [1:0] forward_rs1, // Forwarding control for rs1 (00=none, 01=EX, 10=MA, 11=WB)
-    output reg [1:0] forward_rs2  // Forwarding control for rs2 (00=none, 01=EX, 10=MA, 11=WB)
+    output reg [1:0] forward_rs2, // Forwarding control for rs2 (00=none, 01=EX, 10=MA, 11=WB)
+    // New output for store data forwarding
+    output reg [1:0] forward_store_data // Forwarding control for store data (00=none, 01=EX, 10=MA, 11=WB)
 );
 
     // Function to check if register addresses match and write is enabled
@@ -51,6 +53,10 @@ module hazard_detection_unit(
         // Check hazards for rs2
         forward_rs2 = check_hazard(rs2_id, rd_ex, rd_ma, rd_wb, 
                                   reg_write_enable_ex, reg_write_enable_ma, reg_write_enable_wb);
+        
+        // Forwarding control for store data (rt)
+        forward_store_data = check_hazard(rs2_id, rd_ex, rd_ma, rd_wb, 
+                                         reg_write_enable_ex, reg_write_enable_ma, reg_write_enable_wb);
         
         // Stall pipeline only for load-use hazard (EX is load and destination matches ID source)
         if (is_load_ex && rd_ex != 0 && 
